@@ -1,4 +1,4 @@
-package com.team4.model;
+package com.team4.model.account;
 
 public class SavingsAccount extends Account {
     public SavingsAccount(String accountNumber, String holderName, String email, String accountPin,

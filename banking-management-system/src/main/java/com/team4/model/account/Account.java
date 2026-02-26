@@ -1,4 +1,4 @@
-package com.team4.model;
+package com.team4.model.account;
 
 import java.util.regex.Pattern;
 

@@ -1,4 +1,4 @@
-package com.team4.model;
+package com.team4.model.user;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

@@ -1,13 +1,15 @@
 package com.team4;
 
-import com.team4.model.Account;
+import com.team4.model.account.Account;
+import com.team4.model.account.AccountStatus;
+import com.team4.model.account.AccountType;
+import com.team4.model.account.SavingsAccount;
 
 public class Main {
     public static void main(String[] args) {
-        Account acc1 = new Account(01, "So Mana", 50.0);
-        Account acc2 = new Account(02, "San Soklin", 40.0);
-
-        System.out.println(acc1);
-        System.out.println(acc2);
+        Account account = new SavingsAccount("1244", "idhfnc", "hdwu12@gmail.com",
+                "123632", AccountType.MAIN,
+                AccountStatus.ACTIVE, 221424);
+        System.out.println(account);
     }
 }
