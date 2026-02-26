@@ -1,7 +1,6 @@
 package com.team4.model.account;
 
-import com.team4.model.AccountType;
-
+// import com.team4.model.AccountType;
 public class MainAccount extends Account {
     public MainAccount(String accountNumber, String holderName, String email, String accountPin,
             AccountType accountType, AccountStatus accountStatus, double balance) {
