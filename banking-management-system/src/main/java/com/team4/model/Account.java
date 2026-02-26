@@ -99,6 +99,9 @@ public class Account {
     }
 
     protected void setBalance(double balance) {
+        if (balance < 0) {
+            throw new IllegalArgumentException("Balance must be >= 0.");
+        }
         this.balance = balance;
     }
 
