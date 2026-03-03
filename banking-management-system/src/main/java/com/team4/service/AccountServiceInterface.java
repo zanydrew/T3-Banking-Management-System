@@ -11,6 +11,4 @@ public interface AccountServiceInterface {
 
     Account findAccountByNumber(String accountNumber);
 
-    void updatedBalance(String accountNumber, double nnewBalance);
-
 }

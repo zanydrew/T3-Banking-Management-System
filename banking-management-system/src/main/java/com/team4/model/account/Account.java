@@ -2,7 +2,9 @@ package com.team4.model.account;
 
 import java.util.regex.Pattern;
 
-public class Account {
+import com.team4.service.AccountService;
+
+public abstract class Account extends AccountService {
     private String accountNumber;
     private String holderName;
     private String email;
@@ -10,6 +12,8 @@ public class Account {
     private AccountType accountType;
     private AccountStatus accountStatus;
     private double balance;
+
+    public abstract void updatedBalance(String accountNumber, double newBalance);
 
     // ==== Constructor ====
     public Account(String accountNumber, String holderName, String email, String accountPin, AccountType accountType,

@@ -8,6 +8,12 @@ public class MainAccount extends Account {
     }
 
     @Override
+    public void updatedBalance(String accountNumber, double newBalance) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
     public String toString() {
         return "Account Number: " + getAccountNumber() + " \nHolder Name: " + getHolderName() + "\nBalance: $"
                 + getBalance() + "\nEmail: " + getEmail() + "\nAccount Type: " + getAccountType() + "\nAccount status: "

@@ -15,11 +15,6 @@ public class AccountService implements AccountServiceInterface {
     }
 
     @Override
-    public void updatedBalance(String accountNumber, double newBalance) {
-
-    }
-
-    @Override
     public void deposit(String accountNumber, double amount) {
         if (findAccountByNumber(accountNumber) == null) {
             throw new IllegalArgumentException("Cannot find this account number.");
