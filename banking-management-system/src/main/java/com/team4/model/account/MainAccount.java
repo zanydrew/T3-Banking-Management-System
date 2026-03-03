@@ -3,8 +3,8 @@ package com.team4.model.account;
 // import com.team4.model.AccountType;
 public class MainAccount extends Account {
     public MainAccount(String accountNumber, String holderName, String email, String accountPin,
-            AccountType accountType, AccountStatus accountStatus, double balance) {
-        super(accountNumber, holderName, email, accountPin, AccountType.MAIN, accountStatus, balance);
+            AccountStatus accountStatus, double balance) {
+        super(accountNumber, holderName, email, accountPin, accountStatus, balance);
     }
 
     @Override
@@ -15,8 +15,9 @@ public class MainAccount extends Account {
 
     @Override
     public String toString() {
-        return "Account Number: " + getAccountNumber() + " \nHolder Name: " + getHolderName() + "\nBalance: $"
-                + getBalance() + "\nEmail: " + getEmail() + "\nAccount Type: " + getAccountType() + "\nAccount status: "
+        return "Account Number: " + getAccountNumber() + " \nHolder Name: " + getHolderName() + "\nAccount Type: "
+                + getAccountType() + "\nBalance: $"
+                + getBalance() + "\nEmail: " + getEmail() + "\nAccount status: "
                 + getAccountStatus();
     }
 }

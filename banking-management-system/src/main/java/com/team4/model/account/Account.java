@@ -16,14 +16,14 @@ public abstract class Account extends AccountService {
     public abstract void updatedBalance(String accountNumber, double newBalance);
 
     // ==== Constructor ====
-    public Account(String accountNumber, String holderName, String email, String accountPin, AccountType accountType,
+    public Account(String accountNumber, String holderName, String email, String accountPin,
             AccountStatus accountStatus,
             double balance) {
         setAccountNumber(accountNumber);
         setHolderName(holderName);
         setEmail(email);
         setAccountPin(accountPin);
-        setAccountType(accountType);
+        // setAccountType(accountType);
         setAccountStatus(accountStatus);
         setBalance(balance);
     }
