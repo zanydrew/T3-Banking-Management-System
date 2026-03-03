@@ -37,7 +37,16 @@ public class AccountService implements AccountServiceInterface {
 
     @Override
     public void withdraw(String accountNumber, double amount) {
-        // TODO Auto-generated method stub
+        if (findAccountByNumber(accountNumber) == null) {
+            throw new IllegalArgumentException("Cannot find this account number.");
+        }
+        findAccountByNumber(accountNumber);
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Cannot withdraw amount that <= 0. Amount must be greater than 0.");
+        }
+
+        double newBalance = account.getBalance() - amount;
+        account.updatedBalance(accountNumber, newBalance);
 
     }
 
