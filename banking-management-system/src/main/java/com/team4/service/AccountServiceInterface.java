@@ -10,7 +10,4 @@ public interface AccountServiceInterface {
 
     void deposit(Account accountNumber, double amount);
 
-    void loan(Customer loaner, double amount);
-
-    boolean can(TransactionType accountTransactionType);
 }
