@@ -7,22 +7,42 @@ public class AccountService implements AccountServiceInterface {
 
     @Override
     public Account findAccountByNumber(String accountNumber) {
-
-        return null;
-    }
-
-    @Override
-    public void deposit(Account accountNumber, double amount) {
+        if (!accountNumber.equals(account.getAccountNumber())) {
+            throw new IllegalArgumentException("Cannot find this account number.");
+        }
+        return account;
 
     }
 
     @Override
-    public void transfer(Account sender, Account reciever, double amount) {
+    public void updatedBalance(String accountNumber, double newBalance) {
 
     }
 
     @Override
-    public void withdraw(Account accountNumber, double amount) {
+    public void deposit(String accountNumber, double amount) {
+        if (findAccountByNumber(accountNumber) == null) {
+            throw new IllegalArgumentException("Cannot find this account number.");
+        }
+        findAccountByNumber(accountNumber);
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Cannot deposit amount that <= 0. Amount must be greater than 0.");
+        }
+
+        double newBalance = account.getBalance() + amount;
+        account.updatedBalance(accountNumber, newBalance);
+
+    }
+
+    @Override
+    public void transfer(String sender, Account reciever, double amount) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void withdraw(String accountNumber, double amount) {
+        // TODO Auto-generated method stub
 
     }
 
