@@ -7,9 +7,9 @@ import com.team4.model.account.SavingsAccount;
 
 public class Main {
     public static void main(String[] args) {
-        Account account = new SavingsAccount("1244", "idhfnc", "hdwu12@gmail.com",
-                "123632", AccountType.MAIN,
-                AccountStatus.ACTIVE, 221424);
-        System.out.println(account);
+        // Account account = new SavingsAccount("1244", "idhfnc", "hdwu12@gmail.com",
+        // "123632", AccountType.MAIN,
+        // AccountStatus.ACTIVE, 221424);
+        // System.out.println(account);
     }
 }
