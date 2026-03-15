@@ -18,6 +18,17 @@ public class Transaction {
     private TransactionStatus status;
     private final String initiatedBy;
 
+    private Transaction(Builder builder) {
+        this.transactionID = UUID.randomUUID().toString();
+        this.type = builder.type;
+        this.transactionDate = LocalDateTime.now();
+        this.fromAccount = builder.fromAccount;
+        this.toAccount = builder.toAccount;
+        this.amount = builder.amount;
+        this.status = TransactionStatus.PENDING;
+        this.description = builder.description;
+        this.initiatedBy = builder.initiatedBy;
+    }
 
     // === Builder ===
     /*
