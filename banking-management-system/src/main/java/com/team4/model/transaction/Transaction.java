@@ -19,4 +19,60 @@ public class Transaction {
     private final String initiatedBy;
 
 
+    // === Builder ===
+    /*
+     * Why need Builder?
+     * - Since we just need a record of the transaction, it would be weird to create
+     * an object for transaction everytime.
+     * - So we use Builder (a static inner class) for only instanciate the record
+     * which has only needed information
+     * and clean printed. It's also improve encapsulation(since nested static class
+     * doesn't need to instanciate from its outer class)
+     */
+
+    public static class Builder {
+        private TransactionType type;
+        private String fromAccount;
+        private String toAccount;
+        private double amount;
+        private String description = "";
+        private String initiatedBy = "system";
+
+        public Builder type(TransactionType type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder fromAccount(String accountNumber) {
+            this.fromAccount = accountNumber;
+            return this;
+        }
+
+        public Builder toAccount(String accountNumber) {
+            this.toAccount = accountNumber;
+            return this;
+        }
+
+        public Builder amount(double amount) {
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Amount must be greater than 0.");
+            }
+            this.amount = amount;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder initiatedBy(String username) {
+            this.initiatedBy = username;
+            return this;
+        }
+
+        public Transaction build() {
+            validate();
+            return new Transaction(this);
+        }
 }
