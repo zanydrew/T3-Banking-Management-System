@@ -1,11 +1,12 @@
 package com.team4.model.account;
 
-import java.util.regex.Pattern;
-
 import com.team4.service.AccountService;
+
+import java.util.regex.Pattern;
 
 public abstract class Account extends AccountService {
     private String accountNumber;
+    private String customerId;
     private String holderName;
     private String email;
     private String accountPin;

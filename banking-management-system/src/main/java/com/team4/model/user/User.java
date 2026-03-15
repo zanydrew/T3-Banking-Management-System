@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 public abstract class User {
-    private String id;
+    private int userId;
     private String username;
     private String password;
     private String fullname;
@@ -15,10 +15,10 @@ public abstract class User {
 
     // Constructor
 
-    protected User(String id, String username, String password, String fullname, String phone, String dOB,
+    protected User(int userId, String username, String password, String fullname, String phone, String dOB,
             UserRole role) {
 
-        setId(id);
+        setUserId(userId);
         setUsername(username);
         setPassword(password);
         setFullname(fullname);
@@ -29,8 +29,8 @@ public abstract class User {
 
     // Getters
 
-    public String getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
     public String getPhone() {
@@ -59,11 +59,13 @@ public abstract class User {
 
     // Setters
 
-    protected void setId(String id) {
-        if (id.isEmpty() || id.isBlank()) {
-            throw new IllegalArgumentException("Id must be filled.");
-        }
-        this.id = id.trim();
+    protected void setUserId(int userId) {
+//        if (id.isEmpty() || id.isBlank()) {
+//            throw new IllegalArgumentException("Id must be filled.");
+//        }
+//        this.id =
+
+        this.userId = userId;
     }
 
     protected void setPhone(String phone) {
@@ -214,7 +216,7 @@ public abstract class User {
     @Override
     public String toString() {
         return "User{" +
-                "Id='" + id + '\'' +
+                "Id='" + userId + '\'' +
                 ", fullName='" + fullname + '\'' +
                 ", phone='" + phone + '\'' +
                 ", username='" + username + '\'' +
