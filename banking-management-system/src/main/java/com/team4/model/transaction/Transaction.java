@@ -75,4 +75,30 @@ public class Transaction {
             validate();
             return new Transaction(this);
         }
+
+        private void validate() {
+            if (type == null)
+                throw new IllegalStateException("TransactionType is required.");
+            if (amount <= 0)
+                throw new IllegalStateException("Amount is required.");
+
+            switch (type) {
+                case DEPOSIT:
+                    if (toAccount == null)
+                        throw new IllegalStateException(type + " requires a target account.");
+
+                    break;
+                case WITHDRAW:
+                    if (fromAccount == null)
+                        throw new IllegalStateException(type + " requires a target account.");
+
+                    break;
+                case TRANSFER:
+                    if (fromAccount == null || toAccount == null)
+                        throw new IllegalStateException("TRANSFER requires both source and target accounts.");
+                    if (fromAccount.equals(toAccount))
+                        throw new IllegalStateException("Source and target accounts must differ.");
+                    break;
+            }
+        }
 }
