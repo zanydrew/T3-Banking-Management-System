@@ -27,6 +27,7 @@
 /dataSources/
 /dataSources.local.xml
 /httpRequests/
+/.idea/
 
 # Optional but common
 *.iml
