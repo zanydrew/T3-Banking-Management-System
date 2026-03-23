@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.LoginController"
+      spacing="12" alignment="CENTER"
+      prefWidth="360" prefHeight="240">
+
+    <Label text="Banking System" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <TextField fx:id="usernameField" promptText="Username"/>
+    <PasswordField fx:id="passwordField" promptText="Password"/>
+    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+    <Button text="Login" onAction="#handleLogin"/>
+
+</VBox>
