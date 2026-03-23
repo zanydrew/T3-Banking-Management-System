@@ -1,7 +1,5 @@
 package com.team4.model.transaction;
 
-import com.team4.service.TransactionType;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
