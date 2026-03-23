@@ -1,6 +1,7 @@
 package com.team4.model.transaction;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class Transaction {
@@ -111,4 +112,98 @@ public class Transaction {
             }
         }
     }
+
+
+    // === Getters ===
+    public String getTransactionID() {
+        return transactionID;
+    }
+
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
+    }
+
+    public String getFromAccount() {
+        return fromAccount;
+    }
+
+    public String getToAccount() {
+        return toAccount;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getInitiatedBy() {
+        return initiatedBy;
+    }
+
+    public void markCompleted() {
+        if (this.status != TransactionStatus.PENDING) {
+            throw new IllegalStateException("Only PENDING transactions can be completed.");
+        }
+        this.status = TransactionStatus.COMPLETED;
+    }
+
+    public void markFailed() {
+        if (this.status == TransactionStatus.COMPLETED) {
+            throw new IllegalStateException("Completed transaction cannot be failed.");
+        }
+        this.status = TransactionStatus.FAILED;
+    }
+
+    /*
+     * Reverse a completed transaction.
+     * Typically called by a Manager; the caller is responsible for
+     * reversing the actual account balances.
+     */
+
+    public void reverse() {
+        if (this.status != TransactionStatus.COMPLETED)
+            throw new IllegalStateException("Only COMPLETED transactions can be reversed.");
+        this.status = TransactionStatus.REVERSED;
+    }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return String.format(
+                "[%s] %s | %s | $%.2f | %s → %s | By: %s | %s",
+                transactionID.substring(0, 8),
+                transactionDate.format(fmt),
+                type,
+                amount,
+                fromAccount != null ? fromAccount : "—",
+                toAccount != null ? toAccount : "—",
+                initiatedBy,
+                status);
+    }
+
+    // @Override
+    // public String toString() {
+    // DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    // return String.format(
+    // "[%s] %s | %s | $%.2f | %s - %s | By: %s | %s",
+    // transactionID.substring(0, 8),
+    // transactionDate.format(fmt),
+    // type,
+    // amount,
+    // fromAccount,
+    // toAccount,
+    // initiatedBy,
+    // status);
+    // }
 }
