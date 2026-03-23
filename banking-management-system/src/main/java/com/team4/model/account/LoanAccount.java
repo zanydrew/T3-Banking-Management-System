@@ -18,18 +18,33 @@ public class LoanAccount extends Account {
     private int term; // Term: The duration over (in year) which the loan will be repaid
     private double rate;
 
-    public LoanAccount(String accountNumber, String holderName, String email, String accountPin,
+    public LoanAccount(String accountNumber, int userId, String holderName, String email, String accountPin,
             AccountStatus accountStatus, double balance, double principle, int term) {
-        super(accountNumber, holderName, email, accountPin, accountStatus, balance);
+        super(accountNumber,userId, holderName, email, accountPin, accountStatus, balance);
         this.getAccountType();
         setPrinciple(principle);
         setTerm(term);
         this.rate = calculateInterest(principle, term);
     }
 
+//    @Override
+//    public void updatedBalance(String accountNumber, double newBalance) {
+//
+//
+//    }
+
     @Override
-    public void updatedBalance(String accountNumber, double newBalance) {
-        // TODO Auto-generated method stub
+    public void withdraw(String accountNumber, double amount) {
+
+    }
+
+    @Override
+    public void transfer(String fromAccount, String toAccount, double amount) {
+
+    }
+
+    @Override
+    public void deposit(String accountNumber, double amount) {
 
     }
 
@@ -77,7 +92,7 @@ public class LoanAccount extends Account {
 
     @Override
     public String toString() {
-        return "Account Number: " + getAccountNumber() + " \nHolder Name: " + getHolderName() + "\nAccount Type: "
+        return "User ID: " + getUserId() + "\nAccount Number: " + getAccountNumber() + " \nHolder Name: " + getHolderName() + "\nAccount Type: "
                 + getAccountType() + "\nPrinciple: $" + getPrinciple() + "\nTerm: " + getTerm() + " Years"
                 + "\nInterest: $"
                 + calculateInterest(principle, term) + "\nTotal Loan Pay: $" + totalLaonPay() + "\nBalance: $"

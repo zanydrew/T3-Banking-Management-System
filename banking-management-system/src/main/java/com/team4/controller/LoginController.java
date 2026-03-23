@@ -1,6 +1,7 @@
-package com.team4;
+package com.team4.controller;
 
 
+import com.team4.App;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;

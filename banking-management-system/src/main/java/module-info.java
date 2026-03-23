@@ -13,4 +13,6 @@ module com.team4 {
     opens com.team4.controller to javafx.fxml;
 
     exports com.team4;
+    exports com.team4.controller;
+
 }

@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 
 /**
@@ -55,8 +56,13 @@ public class App extends Application {
 
     public static void switchScene(String fxml) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    App.class.getResource("/view/" + fxml));  // fixed
+            // For Maven modular project — use the class loader
+            URL resource = App.class.getResource("/com/team4/" + fxml);
+
+            if (resource == null)
+                throw new RuntimeException("Cannot find FXML: " + fxml);
+
+            FXMLLoader loader = new FXMLLoader(resource);
             primaryStage.setScene(new Scene(loader.load()));
         } catch (IOException e) {
             throw new RuntimeException("Failed to load scene: " + fxml, e);
