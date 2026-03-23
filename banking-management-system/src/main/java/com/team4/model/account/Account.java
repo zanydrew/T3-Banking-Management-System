@@ -1,11 +1,12 @@
 package com.team4.model.account;
 
-import com.team4.service.AccountService;
+import com.team4.service.AccountServiceInterface;
 
 import java.util.regex.Pattern;
 
-public abstract class Account extends AccountService {
+public abstract class Account implements AccountServiceInterface {
     private String accountNumber;
+    private int userId;
     private String customerId;
     private String holderName;
     private String email;
@@ -14,13 +15,14 @@ public abstract class Account extends AccountService {
     private AccountStatus accountStatus;
     private double balance;
 
-    public abstract void updatedBalance(String accountNumber, double newBalance);
+//    public abstract void updatedBalance(String accountNumber, double newBalance);
 
     // ==== Constructor ====
-    public Account(String accountNumber, String holderName, String email, String accountPin,
+    public Account(String accountNumber,int userId, String holderName, String email, String accountPin,
             AccountStatus accountStatus,
             double balance) {
         setAccountNumber(accountNumber);
+        this.userId = userId;
         setHolderName(holderName);
         setEmail(email);
         setAccountPin(accountPin);
@@ -32,6 +34,9 @@ public abstract class Account extends AccountService {
     // === Getters ===
     public String getAccountNumber() {
         return accountNumber;
+    }
+    public int getUserId() {
+        return userId;
     }
 
     public String getHolderName() {
@@ -61,6 +66,10 @@ public abstract class Account extends AccountService {
     // === Setters ===
     protected void setAccountStatus(AccountStatus accountStatus) {
         this.accountStatus = accountStatus;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     protected void setAccountNumber(String accountNumber) {
