@@ -1,4 +1,4 @@
-package com.team4;
+package com.team4.app;
 
 import com.team4.config.DatabaseConnection;
 import com.team4.dao.AccountDAO;
