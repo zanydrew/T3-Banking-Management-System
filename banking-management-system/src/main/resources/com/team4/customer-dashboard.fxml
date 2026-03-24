@@ -7,7 +7,7 @@
 
 <HBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx/21"
-      fx:controller="controller.CustomerDashboardController"
+      fx:controller="com.team4.controller.CustomerDashboardController"
       styleClass="root"
       stylesheets="@dashboard.css"
       prefWidth="1100" prefHeight="700">
