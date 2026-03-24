@@ -1,16 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.team4.controller.LoginController"
-      spacing="12" alignment="CENTER"
-      prefWidth="360" prefHeight="240">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           xmlns="http://javafx.com/javafx/21"
+           fx:controller="com.team4.controller.LoginController"
+           styleClass="root-pane"
+           stylesheets="@login.css"
+           prefWidth="900" prefHeight="600">
 
-    <Label text="Banking System" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
-    <TextField fx:id="usernameField" promptText="Username"/>
-    <PasswordField fx:id="passwordField" promptText="Password"/>
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
-    <Button text="Login" onAction="#handleLogin"/>
+<!-- Background texture dots -->
+<Pane styleClass="bg-texture" mouseTransparent="true"/>
 
+<!-- Decorative circles -->
+<Circle styleClass="deco-circle-1" radius="180" mouseTransparent="true"/>
+<Circle styleClass="deco-circle-2" radius="120" mouseTransparent="true"/>
+
+<!-- Card container -->
+<VBox styleClass="card" alignment="CENTER" spacing="0" maxWidth="420" maxHeight="560">
+
+    <!-- Top accent bar -->
+    <Pane styleClass="card-accent" prefHeight="5" maxWidth="420"/>
+
+    <VBox alignment="CENTER" spacing="28" styleClass="card-inner">
+
+        <!-- Icon area -->
+        <VBox alignment="CENTER" spacing="10">
+            <StackPane styleClass="icon-ring">
+                <!-- Bank icon SVG-style using shapes -->
+                <Pane styleClass="bank-icon"/>
+            </StackPane>
+            <Label text="iBanking" styleClass="brand-title"/>
+            <!--                <Label text="Banking Management System" styleClass="brand-title"/>-->
+            <!--                <Label text="Banking Management System" styleClass="brand-subtitle"/>-->
+        </VBox>
+
+        <!-- Form fields -->
+        <VBox spacing="14" maxWidth="320">
+
+            <!-- Username field -->
+            <VBox spacing="6">
+                <Label text="Username" styleClass="field-label"/>
+                <StackPane>
+                    <Pane styleClass="field-icon-user" mouseTransparent="true"/>
+                    <TextField fx:id="usernameField"
+                               promptText="Enter your username"
+                               styleClass="input-field"
+                               prefHeight="46"/>
+                </StackPane>
+            </VBox>
+
+            <!-- Password field -->
+            <VBox spacing="6">
+                <Label text="Password" styleClass="field-label"/>
+                <StackPane>
+                    <Pane styleClass="field-icon-lock" mouseTransparent="true"/>
+                    <PasswordField fx:id="passwordField"
+                                   promptText="Enter your password"
+                                   styleClass="input-field"
+                                   prefHeight="46"/>
+                </StackPane>
+            </VBox>
+
+        </VBox>
+
+        <!-- Remember me + forgot -->
+        <!--            <HBox maxWidth="320" alignment="CENTER_LEFT" spacing="0">-->
+        <!--                <CheckBox fx:id="rememberMe" text="Remember me" styleClass="remember-check"/>-->
+        <!--                <Pane HBox.hgrow="ALWAYS"/>-->
+        <!--                <Label text="Forgot password?" styleClass="forgot-label"/>-->
+        <!--            </HBox>-->
+
+        <!-- Error label -->
+        <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"
+               maxWidth="320" alignment="CENTER" textAlignment="CENTER"
+               visible="false" managed="false"/>
+
+        <!-- Sign in button -->
+        <Button fx:id="loginButton"
+                text="Sign In"
+                styleClass="signin-btn"
+                prefWidth="320" prefHeight="48"
+                onAction="#handleLogin"
+                defaultButton="true"/>
+
+        <!-- Divider -->
+        <!--            <HBox alignment="CENTER" spacing="12" maxWidth="320">-->
+        <!--                <Separator HBox.hgrow="ALWAYS"/>-->
+        <!--                <Label text="secure login" styleClass="divider-text"/>-->
+        <!--                <Separator HBox.hgrow="ALWAYS"/>-->
+        <!--            </HBox>-->
+
+        <!-- Footer -->
+        <Label text="© 2025 Banking Management System" styleClass="footer-text"/>
+
+    </VBox>
 </VBox>
+
+</StackPane>

@@ -11,5 +11,8 @@
       </list>
     </option>
   </component>
+  <component name="ProjectResources">
+    <resource url="http://javafx.com/javafx/21" location="$USER_HOME$/Downloads/JavaLibraries/javafx-sdk-21.0.10/lib/javafx.controls.jar" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="25" project-jdk-type="JavaSDK" />
 </project>
