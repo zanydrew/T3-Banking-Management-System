@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.Priority?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx/21"
+      fx:controller="controller.CustomerDashboardController"
+      styleClass="root"
+      stylesheets="@dashboard.css"
+      prefWidth="1100" prefHeight="700">
+
+    <!-- ===== SIDEBAR ===== -->
+    <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+
+        <VBox styleClass="sidebar-brand" alignment="CENTER_LEFT" spacing="4">
+            <Label text="iBanking" styleClass="sidebar-logo"/>
+            <Label text="My Account" styleClass="sidebar-role"/>
+        </VBox>
+
+        <VBox styleClass="sidebar-user" alignment="CENTER" spacing="6">
+            <StackPane styleClass="avatar">
+                <Label fx:id="avatarLabel" text="?" styleClass="avatar-letter"/>
+            </StackPane>
+            <Label fx:id="customerNameLabel" text="Customer" styleClass="user-name"/>
+            <Label text="Account Holder" styleClass="user-role-badge"/>
+        </VBox>
+
+        <Separator styleClass="sidebar-sep"/>
+
+        <VBox styleClass="nav-section" spacing="4" VBox.vgrow="ALWAYS">
+            <Label text="NAVIGATION" styleClass="nav-section-label"/>
+            <Button fx:id="btnMyAccount"    text="My Account"    styleClass="nav-btn,nav-btn-active" onAction="#showMyAccount"    maxWidth="Infinity"/>
+            <Button fx:id="btnTransact"     text="Transactions"  styleClass="nav-btn"                onAction="#showTransact"     maxWidth="Infinity"/>
+            <Button fx:id="btnHistory"      text="History"       styleClass="nav-btn"                onAction="#showHistory"      maxWidth="Infinity"/>
+            <Button fx:id="btnProfile"      text="My Profile"    styleClass="nav-btn"                onAction="#showProfile"      maxWidth="Infinity"/>
+        </VBox>
+
+        <VBox styleClass="sidebar-footer">
+            <Separator styleClass="sidebar-sep"/>
+            <Button text="Sign Out" styleClass="logout-btn" onAction="#handleLogout" maxWidth="Infinity"/>
+        </VBox>
+    </VBox>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <VBox HBox.hgrow="ALWAYS" styleClass="main-content" spacing="0">
+
+        <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+            <Label fx:id="pageTitle" text="My Account" styleClass="page-title"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="dateLabel" text="" styleClass="topbar-date"/>
+        </HBox>
+
+        <StackPane VBox.vgrow="ALWAYS" styleClass="content-area">
+
+            <!-- MY ACCOUNT -->
+            <VBox fx:id="myAccountPanel" spacing="24" styleClass="panel">
+                <!-- Balance cards -->
+                <HBox spacing="16">
+                    <VBox styleClass="stat-card,stat-blue" HBox.hgrow="ALWAYS" spacing="6">
+                        <Label text="Main Account" styleClass="stat-label"/>
+                        <Label fx:id="mainBalanceLabel" text="\$0.00" styleClass="stat-value"/>
+                        <Label fx:id="mainAccNumLabel"  text="-"     styleClass="stat-sub"/>
+                    </VBox>
+                    <VBox styleClass="stat-card,stat-green" HBox.hgrow="ALWAYS" spacing="6">
+                        <Label text="Savings Account" styleClass="stat-label"/>
+                        <Label fx:id="savingsBalanceLabel" text="\$0.00" styleClass="stat-value"/>
+                        <Label fx:id="savingsAccNumLabel"  text="-"     styleClass="stat-sub"/>
+                    </VBox>
+                    <VBox styleClass="stat-card,stat-amber" HBox.hgrow="ALWAYS" spacing="6">
+                        <Label text="Total Balance" styleClass="stat-label"/>
+                        <Label fx:id="totalBalanceLabel" text="\$0.00" styleClass="stat-value"/>
+                        <Label text="All accounts combined" styleClass="stat-sub"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Accounts detail table -->
+                <VBox styleClass="table-card" spacing="12" VBox.vgrow="ALWAYS">
+                    <Label text="My Accounts" styleClass="card-title"/>
+                    <TableView fx:id="myAccountsTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+                        <columns>
+                            <TableColumn fx:id="maColNum"     text="Account No." prefWidth="180"/>
+                            <TableColumn fx:id="maColType"    text="Type"        prefWidth="120"/>
+                            <TableColumn fx:id="maColBalance" text="Balance"     prefWidth="150"/>
+                            <TableColumn fx:id="maColStatus"  text="Status"      prefWidth="120"/>
+                        </columns>
+                        <placeholder><Label text="No accounts found" styleClass="table-placeholder"/></placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+            <!-- TRANSACTIONS (deposit/withdraw/transfer) -->
+            <VBox fx:id="transactPanel" spacing="24" styleClass="panel" visible="false" managed="false">
+                <Label text="Make a Transaction" styleClass="panel-heading"/>
+                <HBox spacing="20">
+                    <!-- Deposit -->
+                    <VBox styleClass="form-card" spacing="16" HBox.hgrow="ALWAYS">
+                        <Label text="Deposit" styleClass="form-card-title"/>
+                        <VBox spacing="8">
+                            <Label text="To Account" styleClass="field-label"/>
+                            <ComboBox fx:id="depositAccCombo" styleClass="input-field" maxWidth="Infinity" promptText="Select account"/>
+                        </VBox>
+                        <VBox spacing="8">
+                            <Label text="Amount ($)" styleClass="field-label"/>
+                            <TextField fx:id="depositAmtField" promptText="0.00" styleClass="input-field"/>
+                        </VBox>
+                        <Label fx:id="depositMsg" styleClass="op-message" visible="false" managed="false"/>
+                        <Button text="Deposit" styleClass="btn-success" maxWidth="Infinity" onAction="#handleDeposit"/>
+                    </VBox>
+
+                    <!-- Withdraw -->
+                    <VBox styleClass="form-card" spacing="16" HBox.hgrow="ALWAYS">
+                        <Label text="Withdraw" styleClass="form-card-title"/>
+                        <VBox spacing="8">
+                            <Label text="From Account" styleClass="field-label"/>
+                            <ComboBox fx:id="withdrawAccCombo" styleClass="input-field" maxWidth="Infinity" promptText="Select account"/>
+                        </VBox>
+                        <VBox spacing="8">
+                            <Label text="Amount ($)" styleClass="field-label"/>
+                            <TextField fx:id="withdrawAmtField" promptText="0.00" styleClass="input-field"/>
+                        </VBox>
+                        <Label fx:id="withdrawMsg" styleClass="op-message" visible="false" managed="false"/>
+                        <Button text="Withdraw" styleClass="btn-warning" maxWidth="Infinity" onAction="#handleWithdraw"/>
+                    </VBox>
+
+                    <!-- Transfer -->
+                    <VBox styleClass="form-card" spacing="16" HBox.hgrow="ALWAYS">
+                        <Label text="Transfer" styleClass="form-card-title"/>
+                        <VBox spacing="8">
+                            <Label text="From Account" styleClass="field-label"/>
+                            <ComboBox fx:id="transferFromCombo" styleClass="input-field" maxWidth="Infinity" promptText="Select account"/>
+                        </VBox>
+                        <VBox spacing="8">
+                            <Label text="To Account Number" styleClass="field-label"/>
+                            <TextField fx:id="transferToField" promptText="Destination account" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="8">
+                            <Label text="Amount ($)" styleClass="field-label"/>
+                            <TextField fx:id="transferAmtField" promptText="0.00" styleClass="input-field"/>
+                        </VBox>
+                        <Label fx:id="transferMsg" styleClass="op-message" visible="false" managed="false"/>
+                        <Button text="Transfer" styleClass="btn-primary" maxWidth="Infinity" onAction="#handleTransfer"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- HISTORY -->
+            <VBox fx:id="historyPanel" spacing="20" styleClass="panel" visible="false" managed="false">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="Transaction History" styleClass="panel-heading"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="historyAccCombo" promptText="Select account" styleClass="search-field" prefWidth="200"/>
+                    <Button text="Load" styleClass="btn-primary" onAction="#loadHistory"/>
+                </HBox>
+                <VBox styleClass="table-card" spacing="12" VBox.vgrow="ALWAYS">
+                    <TableView fx:id="historyTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+                        <columns>
+                            <TableColumn fx:id="hColId"     text="ID"      prefWidth="100"/>
+                            <TableColumn fx:id="hColType"   text="Type"    prefWidth="110"/>
+                            <TableColumn fx:id="hColAmount" text="Amount"  prefWidth="120"/>
+                            <TableColumn fx:id="hColFrom"   text="From"    prefWidth="150"/>
+                            <TableColumn fx:id="hColTo"     text="To"      prefWidth="150"/>
+                            <TableColumn fx:id="hColStatus" text="Status"  prefWidth="100"/>
+                            <TableColumn fx:id="hColDate"   text="Date"    prefWidth="160"/>
+                        </columns>
+                        <placeholder><Label text="Select an account to view history" styleClass="table-placeholder"/></placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+            <!-- PROFILE -->
+            <VBox fx:id="profilePanel" spacing="24" styleClass="panel" visible="false" managed="false">
+                <Label text="My Profile" styleClass="panel-heading"/>
+                <VBox styleClass="form-card" spacing="20" maxWidth="500">
+                    <VBox spacing="8">
+                        <Label text="Username" styleClass="field-label"/>
+                        <TextField fx:id="profileUsername" editable="false" styleClass="input-field"/>
+                        <!--                        <TextField fx:id="profileUsername" styleClass="input-field" editable="false" styleClass="input-field,input-readonly"/>-->
+                    </VBox>
+                    <VBox spacing="8">
+                        <Label text="Full Name" styleClass="field-label"/>
+                        <TextField fx:id="profileFullName" styleClass="input-field"/>
+                    </VBox>
+                    <VBox spacing="8">
+                        <Label text="Phone" styleClass="field-label"/>
+                        <TextField fx:id="profilePhone" styleClass="input-field"/>
+                    </VBox>
+                    <VBox spacing="8">
+                        <Label text="Date of Birth" styleClass="field-label"/>
+                        <!--                        <TextField fx:id="profileDob" styleClass="input-field" editable="false" styleClass="input-field,input-readonly"/>-->
+                        <TextField fx:id="profileDob" editable="false" styleClass="input-field"/>
+                    </VBox>
+                    <Label fx:id="profileMsg" styleClass="op-message" visible="false" managed="false"/>
+                    <Button text="Save Changes" styleClass="btn-primary" prefWidth="200" onAction="#saveProfile"/>
+                </VBox>
+            </VBox>
+
+        </StackPane>
+    </VBox>
+</HBox>
