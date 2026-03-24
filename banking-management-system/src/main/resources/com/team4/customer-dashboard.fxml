@@ -189,7 +189,7 @@
                     </VBox>
                     <VBox spacing="8">
                         <Label text="Date of Birth" styleClass="field-label"/>
-                        <!--                        <TextField fx:id="profileDob" styleClass="input-field" editable="false" styleClass="input-field,input-readonly"/>-->
+<!--                                                <TextField fx:id="profileDob" styleClass="input-field" editable="false" styleClass="input-field,input-readonly"/>-->
                         <TextField fx:id="profileDob" editable="false" styleClass="input-field"/>
                     </VBox>
                     <Label fx:id="profileMsg" styleClass="op-message" visible="false" managed="false"/>

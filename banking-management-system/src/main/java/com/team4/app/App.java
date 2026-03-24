@@ -50,7 +50,8 @@ public class App extends Application {
                 accountService, userDAO, conn);
 
         switchScene("login.fxml");
-        stage.setTitle("Banking System");
+//        switchScene("manager-dashboard.fxml");
+        stage.setTitle("Banking Managment System");
         stage.show();
     }
 
