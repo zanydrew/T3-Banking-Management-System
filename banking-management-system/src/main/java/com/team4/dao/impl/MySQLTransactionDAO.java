@@ -6,18 +6,13 @@ import com.team4.model.transaction.Transaction;
 import com.team4.model.transaction.TransactionStatus;
 import com.team4.model.transaction.TransactionType;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MySQLTransactionDAO implements TransactionDAO {
 
     private final Connection connection;
-
-    private static final String NULL_ACCOUNT_PLACEHOLDER = "-";
 
     public MySQLTransactionDAO(Connection connection) {
         this.connection = connection;
@@ -42,8 +37,19 @@ public class MySQLTransactionDAO implements TransactionDAO {
             stmt.setString(2, transaction.getType().name());
             stmt.setString(3, transaction.getTransactionDate().toString());
             stmt.setDouble(4, transaction.getAmount());
-            stmt.setString(5, transaction.getFromAccount() != null ? transaction.getFromAccount() : NULL_ACCOUNT_PLACEHOLDER);
-            stmt.setString(6, transaction.getToAccount()   != null ? transaction.getToAccount()   : NULL_ACCOUNT_PLACEHOLDER);
+            if (transaction.getFromAccount() != null) {
+                stmt.setString(5, transaction.getFromAccount());
+            } else {
+                stmt.setNull(5, Types.VARCHAR);
+            }
+
+            if (transaction.getToAccount() != null) {
+                stmt.setString(6, transaction.getToAccount());
+            } else {
+                stmt.setNull(6, Types.VARCHAR);
+            }
+//            stmt.setString(5, transaction.getFromAccount() != null ? transaction.getFromAccount() : NULL_ACCOUNT_PLACEHOLDER);
+//            stmt.setString(6, transaction.getToAccount()   != null ? transaction.getToAccount()   : NULL_ACCOUNT_PLACEHOLDER);
             stmt.setString(7, transaction.getDescription());
             stmt.setString(8, transaction.getStatus().name());
             stmt.setString(9, transaction.getInitiatedBy());
@@ -70,8 +76,8 @@ public class MySQLTransactionDAO implements TransactionDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                TransactionType type     = TransactionType.valueOf(rs.getString("transaction_type"));
-                TransactionStatus status = TransactionStatus.valueOf(rs.getString("transaction_status"));
+                TransactionType type     = TransactionType.valueOf(rs.getString("transaction_type").toUpperCase());
+                TransactionStatus status = TransactionStatus.valueOf(rs.getString("transaction_status").toUpperCase());
                 String fromAccount       = rs.getString("from_account_number");
                 String toAccount         = rs.getString("to_account_number");
 
@@ -81,10 +87,9 @@ public class MySQLTransactionDAO implements TransactionDAO {
                         .description(rs.getString("description"))
                         .initiatedBy(rs.getString("initiated_by"));
 
-                // Skip placeholder — only set real account numbers
-                if (fromAccount != null && !fromAccount.equals(NULL_ACCOUNT_PLACEHOLDER))
+                if (fromAccount != null)
                     builder.fromAccount(fromAccount);
-                if (toAccount != null && !toAccount.equals(NULL_ACCOUNT_PLACEHOLDER))
+                if (toAccount != null)
                     builder.toAccount(toAccount);
 
                 Transaction transaction = builder.build();

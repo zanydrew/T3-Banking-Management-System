@@ -20,7 +20,8 @@ public abstract class User {
 
         setUserId(userId);
         setUsername(username);
-        setPassword(password);
+        this.password = password;
+//        setPassword(password);
         setFullname(fullname);
         setPhone(phone);
         setdOB(dOB);
