@@ -44,20 +44,19 @@ public class App extends Application {
         AccountDAO accountDAO     = new MySQLAccountDAO(conn);
         TransactionDAO transactionDAO = new MySQLTransactionDAO(conn);
 
-        accountService = new AccountService(accountDAO, conn);
+        accountService = new AccountService(accountDAO, conn, transactionDAO);
         authService    = new AuthService(userDAO, sessionDAO, conn);
         managerService = new ManagerService(accountDAO, transactionDAO,
                 accountService, userDAO, conn);
 
         switchScene("login.fxml");
 //        switchScene("manager-dashboard.fxml");
-        stage.setTitle("Banking Managment System");
+        stage.setTitle("Banking Management System");
         stage.show();
     }
 
     public static void switchScene(String fxml) {
         try {
-            // For Maven modular project — use the class loader
             URL resource = App.class.getResource("/com/team4/" + fxml);
 
             if (resource == null)

@@ -75,7 +75,7 @@ public abstract class Account implements AccountServiceInterface {
     protected void setAccountNumber(String accountNumber) {
         if (accountNumber.isEmpty() || accountNumber.isBlank()) {
             throw new IllegalArgumentException("Account must have account number.");
-        } else if (!isDigits(accountNumber) || accountNumber.length() > 12) {
+        } else if (accountNumber.length() > 12) {
             throw new IllegalArgumentException("Invalid account number");
         }
         this.accountNumber = accountNumber.trim();
@@ -102,8 +102,8 @@ public abstract class Account implements AccountServiceInterface {
     protected void setAccountPin(String accountPin) {
         if (accountPin.isEmpty() || accountPin.isBlank()) {
             throw new IllegalArgumentException("Pin must be filled.");
-        } else if (!isDigits(accountPin) || accountPin.length() != 6) {
-            throw new IllegalArgumentException("Pin must have 6 Numbers");
+        } else if (!isDigits(accountPin) || accountPin.length() != 4) {
+            throw new IllegalArgumentException("Pin must have 4 Numbers");
         }
         this.accountPin = accountPin;
     }

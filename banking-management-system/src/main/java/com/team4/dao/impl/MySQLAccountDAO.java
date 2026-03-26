@@ -133,7 +133,7 @@ public class MySQLAccountDAO implements AccountDAO {
 
             while (rs.next()) {
                 String accountNumber  = rs.getString("account_number");
-                int userId            = rs.getInt("user_id");
+                int userId            = rs.getInt("id");
                 String holderName     = rs.getString("holder_name");
                 String email          = rs.getString("email");
                 String accountPin     = rs.getString("account_pin");

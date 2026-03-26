@@ -1,6 +1,7 @@
 package com.team4.service;
 
 import com.team4.dao.AccountDAO;
+import com.team4.dao.TransactionDAO;
 import com.team4.model.account.Account;
 
 import java.sql.Connection;
@@ -10,10 +11,12 @@ public class AccountService implements AccountServiceInterface {
 
     private final AccountDAO accountDAO;
     private final Connection connection;
+    private final TransactionDAO transactionDAO;
 
-    public AccountService(AccountDAO accountDAO, Connection connection) {
+    public AccountService(AccountDAO accountDAO, Connection connection,  TransactionDAO transactionDAO) {
         this.accountDAO = accountDAO;
         this.connection =  connection ;
+        this.transactionDAO = transactionDAO;
     }
 
 
