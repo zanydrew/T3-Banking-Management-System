@@ -1,10 +1,7 @@
 package com.team4.dao.impl;
 
 import com.team4.dao.AccountDAO;
-import com.team4.model.account.Account;
-import com.team4.model.account.AccountStatus;
-import com.team4.model.account.MainAccount;
-import com.team4.model.account.SavingsAccount;
+import com.team4.model.account.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -167,29 +164,49 @@ public class MySQLAccountDAO implements AccountDAO {
     }
 
     @Override
-    public void createAccount(Account account) {
-        String sql = "INSERT INTO accounts(account_number, id, holder_name, email, account_pin, balance, account_status, account_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+    public void createAccount(String accountNumber, int userId, String holderName,
+                              String email, String pin, AccountType type,
+                              double balance) throws SQLException {
+        String sql = "INSERT INTO accounts(account_number, user_id, holder_name, email, " +
+                "account_pin, balance, account_status, account_type) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            String accountNumber = "ACC" + System.currentTimeMillis();
-
             stmt.setString(1, accountNumber);
-            stmt.setInt(2, account.getUserId());
-            stmt.setString(3, account.getHolderName());
-            stmt.setString(4, account.getEmail());
-            stmt.setString(5, account.getAccountPin());
-            stmt.setDouble(6, 0.0);
-            stmt.setString(7, "ACTIVE");
-            stmt.setString(8, account.getAccountType().name());
-
-
+            stmt.setInt(2, userId);
+            stmt.setString(3, holderName);
+            stmt.setString(4, email);
+            stmt.setString(5, pin);
+            stmt.setDouble(6, balance);
+            stmt.setString(7, AccountStatus.ACTIVE.name());
+            stmt.setString(8, type.name());
             stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
+
+//    @Override
+//    public void createAccount(Account account) {
+//        String sql = "INSERT INTO accounts(account_number, id, holder_name, email, account_pin, balance, account_status, account_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+//
+//        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+//
+//            String accountNumber = "ACC" + System.currentTimeMillis();
+//
+//            stmt.setString(1, accountNumber);
+//            stmt.setInt(2, account.getUserId());
+//            stmt.setString(3, account.getHolderName());
+//            stmt.setString(4, account.getEmail());
+//            stmt.setString(5, account.getAccountPin());
+//            stmt.setDouble(6, 0.0);
+//            stmt.setString(7, "ACTIVE");
+//            stmt.setString(8, account.getAccountType().name());
+//
+//
+//            stmt.executeUpdate();
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public Account updateBalance(String accountNumber, double newBalance) {

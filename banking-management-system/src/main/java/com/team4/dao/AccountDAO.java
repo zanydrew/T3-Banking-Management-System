@@ -3,6 +3,7 @@ package com.team4.dao;
 
 import com.team4.model.account.Account;
 import com.team4.model.account.AccountStatus;
+import com.team4.model.account.AccountType;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -35,6 +36,9 @@ public interface AccountDAO {
      * INSERT INTO accounts(account_number, user_id, balance, status)
      * VALUES(?,?,?,?)
      * */
-    void createAccount(Account account);
+//    void createAccount(Account account);
+    void createAccount(String accountNumber, int userId, String holderName,
+                       String email, String pin, AccountType type,
+                       double balance) throws SQLException;
 
 }
