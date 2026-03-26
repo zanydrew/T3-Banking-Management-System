@@ -6,7 +6,8 @@ module com.team4 {
 
     // Database
     requires java.sql;
-    requires mysql.connector.j;     // or mysql.connector.java
+    requires mysql.connector.j;
+    requires java.management;     // or mysql.connector.java
 
 
     // Make controllers accessible to JavaFX

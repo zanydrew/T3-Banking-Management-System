@@ -6,6 +6,7 @@ import com.team4.dao.TransactionDAO;
 import com.team4.dao.UserDAO;
 import com.team4.model.account.Account;
 import com.team4.model.account.AccountStatus;
+import com.team4.model.account.AccountType;
 import com.team4.model.transaction.Transaction;
 import com.team4.model.user.User;
 import com.team4.model.user.UserRole;
@@ -278,6 +279,53 @@ public class ManagerService implements  ManagerServiceInterface{
         } catch (SQLException e) {
             try { connection.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             throw new RuntimeException("Failed to delete customer.", e);
+        } finally {
+            try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
+
+    @Override
+    public void createCustomer(String username, String password, String fullName,
+                               String phone, String dob) {
+        try {
+            // Check username not already taken
+            if (userDAO.findUserByUsername(username) != null)
+                throw new IllegalArgumentException("Username \"" + username + "\" is already taken.");
+
+            connection.setAutoCommit(false);
+            userDAO.createUser(username, password, fullName, phone, dob, UserRole.CUSTOMER);
+            connection.commit();
+            System.out.println("Customer created: " + username);
+
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (SQLException e) {
+            try { connection.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            throw new RuntimeException("Failed to create customer.", e);
+        } finally {
+            try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
+
+    @Override
+    public void createAccount(int userId, String holderName, String email,
+                              String pin, AccountType type, double initialBalance) {
+        // Verify the user exists and is a customer
+        getCustomerOrThrow(userId);
+
+        try {
+            // Generate account number: ACC + userId + timestamp suffix
+            String accountNumber = "ACC" + userId + System.currentTimeMillis() % 100000;
+
+            connection.setAutoCommit(false);
+            accountDAO.createAccount(accountNumber, userId, holderName, email,
+                    pin, type, initialBalance);
+            connection.commit();
+            System.out.println("Account created: " + accountNumber);
+
+        } catch (SQLException e) {
+            try { connection.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            throw new RuntimeException("Failed to create account.", e);
         } finally {
             try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
         }

@@ -1,6 +1,7 @@
 package com.team4.service;
 
 import com.team4.model.account.Account;
+import com.team4.model.account.AccountType;
 import com.team4.model.transaction.Transaction;
 import com.team4.model.user.User;
 
@@ -41,6 +42,11 @@ public interface ManagerServiceInterface {
     void updateCustomerPhone(int userId, String newPhone);
     void updateCustomerFullName(int userId, String newFullName);
     void deleteCustomer(int userId);
+    void createCustomer(String username, String password, String fullName,
+                        String phone, String dob);
+
+    void createAccount(int userId, String holderName, String email,
+                       String pin, AccountType type, double initialBalance);
 
     // --- Control Customer Actions ---
     void managerDeposit(String accountNumber, double amount, String managerUsername);
