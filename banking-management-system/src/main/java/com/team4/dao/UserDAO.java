@@ -12,4 +12,5 @@ public interface UserDAO {
     void updateUserPhone(int userId, String newPhone) throws SQLException;
     void updateUserFullName(int userId, String newFullName) throws SQLException;
     void deleteUser(int userId) throws SQLException;         // manager only
+    void createCustomer(User user) throws SQLException;
 }

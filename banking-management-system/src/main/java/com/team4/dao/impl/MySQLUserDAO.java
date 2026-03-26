@@ -107,5 +107,25 @@ public class MySQLUserDAO implements UserDAO {
             stmt.executeUpdate();
         }
     }
+
+    @Override
+    public void createCustomer(User user) throws SQLException {
+        String sql = """
+        INSERT INTO users (username, password, full_name, phone, dOB, role)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getFullname());
+            stmt.setString(4, user.getPhone());
+            stmt.setString(5, user.getdOB());
+            stmt.setString(6, user.getRole().name());
+
+            stmt.executeUpdate();
+        }
+    }
 }
 
