@@ -75,7 +75,7 @@ public abstract class Account implements AccountServiceInterface {
     protected void setAccountNumber(String accountNumber) {
         if (accountNumber.isEmpty() || accountNumber.isBlank()) {
             throw new IllegalArgumentException("Account must have account number.");
-        } else if (accountNumber.length() > 12) {
+        } else if (accountNumber.length() > 20) {
             throw new IllegalArgumentException("Invalid account number");
         }
         this.accountNumber = accountNumber.trim();

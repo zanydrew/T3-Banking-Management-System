@@ -372,9 +372,9 @@ public class ManagerDashboardController {
         // Customers table
         cColId.setCellValueFactory(new PropertyValueFactory<>("userId"));
         cColUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
-        cColFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        cColFullName.setCellValueFactory(new PropertyValueFactory<>("fullname"));
         cColPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        cColDob.setCellValueFactory(new PropertyValueFactory<>("dob"));
+        cColDob.setCellValueFactory(new PropertyValueFactory<>("dOB"));
         cColRole.setCellValueFactory(new PropertyValueFactory<>("role"));
 
         // Transactions table
