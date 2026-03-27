@@ -7,7 +7,9 @@ import com.team4.dao.UserDAO;
 import com.team4.model.account.Account;
 import com.team4.model.account.AccountStatus;
 import com.team4.model.account.AccountType;
+import com.team4.model.account.MainAccount;
 import com.team4.model.transaction.Transaction;
+import com.team4.model.user.Customer;
 import com.team4.model.user.User;
 import com.team4.model.user.UserRole;
 
@@ -283,30 +285,31 @@ public class ManagerService implements  ManagerServiceInterface{
             try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
         }
     }
+
     @Override
     public void createCustomer(String username, String password, String fullName,
                                String phone, String dob) {
-        // Pre-validate before hitting the model setters
-        // so we can show friendly messages in the GUI
 
-        if (username.isBlank())  throw new IllegalArgumentException("Username is required.");
-        if (password.isBlank())  throw new IllegalArgumentException("Password is required.");
-        if (fullName.isBlank())  throw new IllegalArgumentException("Full name is required.");
-        if (phone.isBlank())     throw new IllegalArgumentException("Phone is required.");
-        if (dob.isBlank())       throw new IllegalArgumentException("Date of birth is required.");
+        if (username == null || username.isBlank()) throw new IllegalArgumentException("Username is required.");
+        if (password == null || password.isBlank()) throw new IllegalArgumentException("Password is required.");
+        if (fullName == null || fullName.isBlank()) throw new IllegalArgumentException("Full name is required.");
+        if (phone    == null || phone.isBlank())    throw new IllegalArgumentException("Phone is required.");
+        if (dob      == null || dob.isBlank())      throw new IllegalArgumentException("Date of birth is required.");
 
+        // Any violation throws IllegalArgumentException with the model's own message.
+        Customer tempCustomer = new Customer(0, username, password, fullName, phone, dob, UserRole.CUSTOMER);
 
-        // Phone: setter requires digits , so replace user input that is number to digit
-        String digitsOnly = phone.replaceAll("[^0-9]", "");
+        String normalisedUsername = tempCustomer.getUsername(); // lowercased & trimmed by setUsername
+        String normalisedPhone    = tempCustomer.getPhone();    // digits-only by setPhone
 
         try {
-            if (userDAO.findUserByUsername(username) != null)
-                throw new IllegalArgumentException("Username \"" + username + "\" is already taken.");
+            if (userDAO.findUserByUsername(normalisedUsername) != null)
+                throw new IllegalArgumentException("Username \"" + normalisedUsername + "\" is already taken.");
 
             connection.setAutoCommit(false);
-            // These will throw IllegalArgumentException if validation fails inside User setters
-            userDAO.createUser(username, password, fullName, digitsOnly, dob, UserRole.CUSTOMER);
+            userDAO.createUser(normalisedUsername, password, fullName, normalisedPhone, dob.trim(), UserRole.CUSTOMER);
             connection.commit();
+            System.out.println("Customer created: " + normalisedUsername);
 
         } catch (IllegalArgumentException e) {
             throw e;
@@ -318,26 +321,38 @@ public class ManagerService implements  ManagerServiceInterface{
         }
     }
 
-
     @Override
     public void createAccount(int userId, String holderName, String email,
                               String pin, AccountType type, double initialBalance) {
         getCustomerOrThrow(userId);
 
-        if (holderName.isBlank()) throw new IllegalArgumentException("Holder name is required.");
-        if (email.isBlank())      throw new IllegalArgumentException("Email is required.");
-        if (pin.isBlank())        throw new IllegalArgumentException("PIN is required.");
-        if (type == null)         throw new IllegalArgumentException("Account type is required.");
+        // Null-safe blank checks for friendly GUI messages before touching the model
+        if (holderName == null || holderName.isBlank()) throw new IllegalArgumentException("Holder name is required.");
+        if (pin        == null || pin.isBlank())        throw new IllegalArgumentException("PIN is required.");
+        if (type       == null)                         throw new IllegalArgumentException("Account type is required.");
+        if (email        == null || email.isBlank())        throw new IllegalArgumentException("Email is required.");
 
-        String accountNumber = "ACC" + String.format("%07d", userId) + (System.currentTimeMillis() % 1000);
-        // ACC + 4-digit userId + 4-digit timestamp suffix = ACC12341234 = 11 chars
-        accountNumber = "ACC" + String.format("%04d", userId % 10000)
+
+        // Since Account number will be auto generated, manager no need to input the account number,
+        // but since the Account model has account number validation, we will give a temp account number just for pass the validation.
+
+        String tempNumber = "ACC0000000000";
+
+        // Any violation throws IllegalArgumentException with the model's own message.
+        new MainAccount(tempNumber, userId, holderName, email,
+                pin, type, AccountStatus.ACTIVE, initialBalance);
+
+        // Generate the real account number only after validation passes
+        // ACC + 4-digit userId + 4-digit timestamp suffix  ->  "ACC00010234" (11 chars, <= 20)
+
+        String accountNumber = "ACC" + String.format("%04d", userId % 10000)
                 + String.format("%04d", System.currentTimeMillis() % 10000);
+
 
         try {
             connection.setAutoCommit(false);
-            // Account setters will validate pin (4 digits), email, holderName, balance
-            accountDAO.createAccount(accountNumber, userId, holderName, email, pin, type, initialBalance);
+            accountDAO.createAccount(accountNumber, userId, holderName.trim(),
+                    email.trim(), pin.trim(), type, initialBalance);
             connection.commit();
 
         } catch (IllegalArgumentException e) {
@@ -349,6 +364,8 @@ public class ManagerService implements  ManagerServiceInterface{
             try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
         }
     }
+
+
 
     @Override
     public void managerDeposit(String accountNumber, double amount, String managerUsername) {
