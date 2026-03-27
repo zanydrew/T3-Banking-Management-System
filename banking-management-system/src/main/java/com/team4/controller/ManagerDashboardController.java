@@ -4,8 +4,10 @@ package com.team4.controller;
 import com.team4.app.App;
 import com.team4.model.account.Account;
 import com.team4.model.account.AccountStatus;
+import com.team4.model.account.AccountType;
 import com.team4.model.transaction.Transaction;
 import com.team4.model.user.User;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -42,6 +44,13 @@ public class ManagerDashboardController {
     @FXML private TableColumn<Account,String>  aColNum, aColHolder, aColEmail, aColType, aColStatus;
     @FXML private TableColumn<Account,Double>  aColBalance;
 
+    // ── Create Account form ──
+    @FXML private VBox          createAccountForm;
+    @FXML private TextField     newAccUserId, newAccHolderName, newAccEmail, newAccBalance;
+    @FXML private PasswordField newAccPin;
+    @FXML private ComboBox<String> newAccType;
+    @FXML private Label         createAccountMsg;
+
     // ── Customers ──
     @FXML private TextField customerSearchField, editFullName, editPhone;
     @FXML private VBox      customerDetailBox;
@@ -49,6 +58,12 @@ public class ManagerDashboardController {
     @FXML private TableView<User> customersTable;
     @FXML private TableColumn<User,Integer> cColId;
     @FXML private TableColumn<User,String>  cColUsername, cColFullName, cColPhone, cColDob, cColRole;
+
+    // ── Create Customer form ──
+    @FXML private VBox          createCustomerForm;
+    @FXML private TextField     newCustUsername, newCustFullName, newCustPhone, newCustDob;
+    @FXML private PasswordField newCustPassword;
+    @FXML private Label         createCustomerMsg;
 
     // ── Transactions ──
     @FXML private TextField txSearchField;
@@ -78,6 +93,8 @@ public class ManagerDashboardController {
             managerNameLabel.setText(name);
             avatarLabel.setText(String.valueOf(name.charAt(0)).toUpperCase());
         }
+        // Populate account type combo
+        newAccType.setItems(FXCollections.observableArrayList("MAIN", "SAVINGS"));
 
         setupTableColumns();
         loadOverview();
@@ -111,8 +128,8 @@ public class ManagerDashboardController {
     }
 
     @FXML void showOverview()     { showOnly(overviewPanel,      "Overview",         btnOverview);     loadOverview(); }
-    @FXML void showAccounts()     { showOnly(accountsPanel,      "Account Mgmt",     btnAccounts);     loadAllAccounts(); }
-    @FXML void showCustomers()    { showOnly(customersPanel,     "Customer Mgmt",    btnCustomers);    loadAllCustomers(); }
+    @FXML void showAccounts()     { showOnly(accountsPanel,      "Account Management",     btnAccounts);     loadAllAccounts(); }
+    @FXML void showCustomers()    { showOnly(customersPanel,     "Customer Management",    btnCustomers);    loadAllCustomers(); }
     @FXML void showTransactions() { showOnly(transactionsPanel,  "Transactions",     btnTransactions); }
     @FXML void showTransfer()     { showOnly(transferPanel,      "Fund Transfer",    btnTransfer); }
 
@@ -203,6 +220,64 @@ public class ManagerDashboardController {
         } catch (Exception e) { showMsg(accountActionMsg, e.getMessage(), true); }
     }
 
+    private void runAccountAction(Runnable action, String msg, boolean isError) {
+        if (selectedAccount == null) return;
+        try { action.run(); showMsg(accountActionMsg, msg, isError); searchAccount(); loadAllAccounts(); }
+        catch (Exception e) { showMsg(accountActionMsg, e.getMessage(), true); }
+    }
+
+    // ── Toggle create account form ──
+    @FXML
+    private void toggleCreateAccount() {
+        boolean showing = createAccountForm.isVisible();
+        createAccountForm.setVisible(!showing);
+        createAccountForm.setManaged(!showing);
+        if (showing) clearCreateAccountForm();
+    }
+
+    // ── Handle create account ──
+    @FXML
+    private void handleCreateAccount() {
+        String userIdStr  = newAccUserId.getText().trim();
+        String holderName = newAccHolderName.getText().trim();
+        String email      = newAccEmail.getText().trim();
+        String pin        = newAccPin.getText().trim();
+        String typeStr    = newAccType.getValue();
+        String balStr     = newAccBalance.getText().trim();
+
+        // Validate
+        if (userIdStr.isEmpty() || holderName.isEmpty() || email.isEmpty()
+                || pin.isEmpty() || typeStr == null) {
+            showMsg(createAccountMsg, "Please fill in all required fields.", true);
+            return;
+        }
+
+        try {
+            int    userId  = Integer.parseInt(userIdStr);
+            double balance = balStr.isEmpty() ? 0.0 : Double.parseDouble(balStr);
+            AccountType type = AccountType.valueOf(typeStr);
+
+            App.managerService.createAccount(userId, holderName, email, pin, type, balance);
+
+            showMsg(createAccountMsg, "Account created successfully.", false);
+            clearCreateAccountForm();
+            loadAllAccounts();
+            loadOverview();
+
+        } catch (NumberFormatException e) {
+            showMsg(createAccountMsg, "Invalid User ID or Balance format.", true);
+        } catch (Exception e) {
+            showMsg(createAccountMsg, e.getMessage(), true);
+        }
+    }
+
+    private void clearCreateAccountForm() {
+        newAccUserId.clear(); newAccHolderName.clear(); newAccEmail.clear();
+        newAccPin.clear(); newAccType.setValue(null); newAccBalance.clear();
+        hideMsg(createAccountMsg);
+    }
+
+
     // =========================================================================
     // Customers
     // =========================================================================
@@ -269,6 +344,48 @@ public class ManagerDashboardController {
             }
         });
     }
+
+    // ── Toggle create customer form ──
+    @FXML
+    private void toggleCreateCustomer() {
+        boolean showing = createCustomerForm.isVisible();
+        createCustomerForm.setVisible(!showing);
+        createCustomerForm.setManaged(!showing);
+        if (showing) clearCreateCustomerForm();
+    }
+
+    // ── Handle create customer ──
+    @FXML
+    private void handleCreateCustomer() {
+        String username = newCustUsername.getText().trim();
+        String password = newCustPassword.getText();
+        String fullName = newCustFullName.getText().trim();
+        String phone    = newCustPhone.getText().trim();
+        String dob      = newCustDob.getText().trim();
+
+        if (username.isEmpty() || password.isEmpty() || fullName.isEmpty()
+                || phone.isEmpty() || dob.isEmpty()) {
+            showMsg(createCustomerMsg, "Please fill in all fields.", true);
+            return;
+        }
+
+        try {
+            App.managerService.createCustomer(username, password, fullName, phone, dob);
+            showMsg(createCustomerMsg, "Customer \"" + username + "\" created successfully.", false);
+            clearCreateCustomerForm();
+            loadAllCustomers();
+            loadOverview();
+        } catch (Exception e) {
+            showMsg(createCustomerMsg, e.getMessage(), true);
+        }
+    }
+
+    private void clearCreateCustomerForm() {
+        newCustUsername.clear(); newCustPassword.clear(); newCustFullName.clear();
+        newCustPhone.clear(); newCustDob.clear();
+        hideMsg(createCustomerMsg);
+    }
+
 
     // =========================================================================
     // Transactions
@@ -350,18 +467,15 @@ public class ManagerDashboardController {
     }
 
     // =========================================================================
-    // Table column setup
+    // Table setup
     // =========================================================================
-
     private void setupTableColumns() {
-        // Overview table
         colAccNum.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
         colHolder.setCellValueFactory(new PropertyValueFactory<>("holderName"));
         colType.setCellValueFactory(new PropertyValueFactory<>("accountType"));
         colBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("accountStatus"));
 
-        // Accounts table
         aColNum.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
         aColHolder.setCellValueFactory(new PropertyValueFactory<>("holderName"));
         aColEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -369,15 +483,14 @@ public class ManagerDashboardController {
         aColBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
         aColStatus.setCellValueFactory(new PropertyValueFactory<>("accountStatus"));
 
-        // Customers table
         cColId.setCellValueFactory(new PropertyValueFactory<>("userId"));
         cColUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         cColFullName.setCellValueFactory(new PropertyValueFactory<>("fullname"));
         cColPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        cColDob.setCellValueFactory(new PropertyValueFactory<>("dOB"));
+//        cColDob.setCellValueFactory(new PropertyValueFactory<>("dOB"));
+        cColDob.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getdOB()));
         cColRole.setCellValueFactory(new PropertyValueFactory<>("role"));
 
-        // Transactions table
         tColId.setCellValueFactory(new PropertyValueFactory<>("transactionID"));
         tColType.setCellValueFactory(new PropertyValueFactory<>("type"));
         tColAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
@@ -385,6 +498,22 @@ public class ManagerDashboardController {
         tColTo.setCellValueFactory(new PropertyValueFactory<>("toAccount"));
         tColStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         tColDate.setCellValueFactory(new PropertyValueFactory<>("transactionDate"));
+
+        // Format balance columns
+        for (TableColumn<Account, Double> col : new TableColumn[]{colBalance, aColBalance}) {
+            col.setCellFactory(c -> new TableCell<>() {
+                @Override protected void updateItem(Double v, boolean empty) {
+                    super.updateItem(v, empty);
+                    setText(empty || v == null ? null : String.format("$%.2f", v));
+                }
+            });
+        }
+        tColAmount.setCellFactory(c -> new TableCell<>() {
+            @Override protected void updateItem(Double v, boolean empty) {
+                super.updateItem(v, empty);
+                setText(empty || v == null ? null : String.format("$%.2f", v));
+            }
+        });
     }
 
     // =========================================================================

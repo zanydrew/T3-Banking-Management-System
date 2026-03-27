@@ -131,6 +131,53 @@
                     <Label fx:id="accountActionMsg" styleClass="op-message" visible="false" managed="false"/>
                 </VBox>
 
+                <!-- ── CREATE ACCOUNT FORM ── -->
+                <VBox styleClass="form-card" spacing="0">
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="form-card-header">
+                        <Label text="Create New Account" styleClass="form-card-title"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button text="+ New Account" styleClass="btn-primary" onAction="#toggleCreateAccount"/>
+                    </HBox>
+
+                    <VBox fx:id="createAccountForm" spacing="14" styleClass="form-card-body"
+                          visible="false" managed="false">
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Customer User ID" styleClass="field-label"/>
+                                <TextField fx:id="newAccUserId" promptText="e.g. 3" styleClass="input-field"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Holder Name" styleClass="field-label"/>
+                                <TextField fx:id="newAccHolderName" promptText="Full name" styleClass="input-field"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Email" styleClass="field-label"/>
+                                <TextField fx:id="newAccEmail" promptText="email@example.com" styleClass="input-field"/>
+                            </VBox>
+                        </HBox>
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Account PIN" styleClass="field-label"/>
+                                <PasswordField fx:id="newAccPin" promptText="4-digit PIN" styleClass="input-field"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Account Type" styleClass="field-label"/>
+                                <ComboBox fx:id="newAccType" promptText="Select type"
+                                          styleClass="input-field" maxWidth="Infinity"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Initial Balance ($)" styleClass="field-label"/>
+                                <TextField fx:id="newAccBalance" promptText="0.00" styleClass="input-field"/>
+                            </VBox>
+                        </HBox>
+                        <Label fx:id="createAccountMsg" styleClass="op-message" visible="false" managed="false"/>
+                        <HBox spacing="12">
+                            <Button text="Create Account" styleClass="btn-success" onAction="#handleCreateAccount"/>
+                            <Button text="Cancel"         styleClass="btn-ghost"   onAction="#toggleCreateAccount"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
                 <VBox styleClass="table-card" spacing="12" VBox.vgrow="ALWAYS">
                     <Label text="All Accounts" styleClass="card-title"/>
                     <TableView fx:id="accountsTable" VBox.vgrow="ALWAYS" styleClass="data-table">
@@ -181,6 +228,48 @@
                         </HBox>
                     </HBox>
                     <Label fx:id="customerActionMsg" styleClass="op-message" visible="false" managed="false"/>
+                </VBox>
+
+                <!-- ── CREATE CUSTOMER FORM ── -->
+                <VBox styleClass="form-card" spacing="0">
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="form-card-header">
+                        <Label text="Create New Customer" styleClass="form-card-title"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button text="+ New Customer" styleClass="btn-primary" onAction="#toggleCreateCustomer"/>
+                    </HBox>
+
+                    <VBox fx:id="createCustomerForm" spacing="14" styleClass="form-card-body"
+                          visible="false" managed="false">
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Username" styleClass="field-label"/>
+                                <TextField fx:id="newCustUsername" promptText="username" styleClass="input-field"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Password" styleClass="field-label"/>
+                                <PasswordField fx:id="newCustPassword" promptText="password" styleClass="input-field"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Full Name" styleClass="field-label"/>
+                                <TextField fx:id="newCustFullName" promptText="Full name" styleClass="input-field"/>
+                            </VBox>
+                        </HBox>
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Phone" styleClass="field-label"/>
+                                <TextField fx:id="newCustPhone" promptText="e.g. 012-345-6789" styleClass="input-field"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Date of Birth" styleClass="field-label"/>
+                                <TextField fx:id="newCustDob" promptText="YYYY-MM-DD" styleClass="input-field"/>
+                            </VBox>
+                        </HBox>
+                        <Label fx:id="createCustomerMsg" styleClass="op-message" visible="false" managed="false"/>
+                        <HBox spacing="12">
+                            <Button text="Create Customer" styleClass="btn-success" onAction="#handleCreateCustomer"/>
+                            <Button text="Cancel"          styleClass="btn-ghost"   onAction="#toggleCreateCustomer"/>
+                        </HBox>
+                    </VBox>
                 </VBox>
 
                 <VBox styleClass="table-card" spacing="12" VBox.vgrow="ALWAYS">

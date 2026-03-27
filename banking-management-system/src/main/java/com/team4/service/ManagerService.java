@@ -283,49 +283,68 @@ public class ManagerService implements  ManagerServiceInterface{
             try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
         }
     }
-
     @Override
     public void createCustomer(String username, String password, String fullName,
                                String phone, String dob) {
+        // Pre-validate before hitting the model setters
+        // so we can show friendly messages in the GUI
+
+        if (username.isBlank())  throw new IllegalArgumentException("Username is required.");
+        if (password.isBlank())  throw new IllegalArgumentException("Password is required.");
+        if (fullName.isBlank())  throw new IllegalArgumentException("Full name is required.");
+        if (phone.isBlank())     throw new IllegalArgumentException("Phone is required.");
+        if (dob.isBlank())       throw new IllegalArgumentException("Date of birth is required.");
+
+
+        // Phone: setter requires digits , so replace user input that is number to digit
+        String digitsOnly = phone.replaceAll("[^0-9]", "");
+
         try {
-            // Check username not already taken
             if (userDAO.findUserByUsername(username) != null)
                 throw new IllegalArgumentException("Username \"" + username + "\" is already taken.");
 
             connection.setAutoCommit(false);
-            userDAO.createUser(username, password, fullName, phone, dob, UserRole.CUSTOMER);
+            // These will throw IllegalArgumentException if validation fails inside User setters
+            userDAO.createUser(username, password, fullName, digitsOnly, dob, UserRole.CUSTOMER);
             connection.commit();
-            System.out.println("Customer created: " + username);
 
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (SQLException e) {
             try { connection.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
-            throw new RuntimeException("Failed to create customer.", e);
+            throw new RuntimeException("Failed to create customer: " + e.getMessage(), e);
         } finally {
             try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
         }
     }
 
+
     @Override
     public void createAccount(int userId, String holderName, String email,
                               String pin, AccountType type, double initialBalance) {
-        // Verify the user exists and is a customer
         getCustomerOrThrow(userId);
 
+        if (holderName.isBlank()) throw new IllegalArgumentException("Holder name is required.");
+        if (email.isBlank())      throw new IllegalArgumentException("Email is required.");
+        if (pin.isBlank())        throw new IllegalArgumentException("PIN is required.");
+        if (type == null)         throw new IllegalArgumentException("Account type is required.");
+
+        String accountNumber = "ACC" + String.format("%07d", userId) + (System.currentTimeMillis() % 1000);
+        // ACC + 4-digit userId + 4-digit timestamp suffix = ACC12341234 = 11 chars
+        accountNumber = "ACC" + String.format("%04d", userId % 10000)
+                + String.format("%04d", System.currentTimeMillis() % 10000);
+
         try {
-            // Generate account number: ACC + userId + timestamp suffix
-            String accountNumber = "ACC" + userId + System.currentTimeMillis() % 100000;
-
             connection.setAutoCommit(false);
-            accountDAO.createAccount(accountNumber, userId, holderName, email,
-                    pin, type, initialBalance);
+            // Account setters will validate pin (4 digits), email, holderName, balance
+            accountDAO.createAccount(accountNumber, userId, holderName, email, pin, type, initialBalance);
             connection.commit();
-            System.out.println("Account created: " + accountNumber);
 
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (SQLException e) {
             try { connection.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
-            throw new RuntimeException("Failed to create account.", e);
+            throw new RuntimeException("Failed to create account: " + e.getMessage(), e);
         } finally {
             try { connection.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
         }

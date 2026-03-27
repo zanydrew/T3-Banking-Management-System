@@ -2,7 +2,18 @@ package com.team4.model.user;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.regex.Pattern;
+
+/**
+ * Abstract class for all users in the system.
+ *
+ * Design decisions:
+ * - ONE constructor that always validates.
+ *   Another constructor for loading trusted data in the database (no validation needed)
+ * - All validation logic lives HERE.
+ * - Setters are protected only subclasses and same-package code
+ *   can mutate. The service layer calls setters through public
+ *   update methods, keeping mutation strict.
+ */
 
 public abstract class User {
     private int userId;
@@ -20,12 +31,27 @@ public abstract class User {
 
         setUserId(userId);
         setUsername(username);
-        this.password = password;
-//        setPassword(password);
+        setPassword(password);
         setFullname(fullname);
         setPhone(phone);
         setdOB(dOB);
         setRole(role);
+    }
+
+    /**
+     * Another constructor for load User from trusted DB data, no validation.
+     * Use ONLY inside DAO(Data Access Object) implementations.
+     */
+    protected User(int id, String username, String password,
+                   String fullname, String phone, String dOB,
+                   UserRole role, boolean trusted) {
+        this.userId   = id;
+        this.username = username;
+        this.password = password;
+        this.fullname = fullname;
+        this.phone    = phone;
+        this.dOB      = dOB;
+        this.role     = role;
     }
 
     // Getters
@@ -61,11 +87,7 @@ public abstract class User {
     // Setters
 
     protected void setUserId(int userId) {
-//        if (id.isEmpty() || id.isBlank()) {
-//            throw new IllegalArgumentException("Id must be filled.");
-//        }
-//        this.id =
-
+        if (userId < 0) throw new IllegalArgumentException("User ID cannot be negative.");
         this.userId = userId;
     }
 
@@ -73,42 +95,26 @@ public abstract class User {
         String p = (phone == null) ? "" : phone.trim();
         if (phone.isEmpty() || phone.isBlank()) {
             throw new IllegalArgumentException("Phone number must be filled.");
-        } else if (!isDigits(p) || p.length() < 8 || p.length() > 12) {
-            throw new IllegalArgumentException("Phone number must be valid.");
+        }
+        if (!isDigits(p) || p.length() < 8 || p.length() > 12) {
+            throw new IllegalArgumentException("Phone number must be 9–11 digits.");
         }
         this.phone = p;
     }
 
-    // Stragy: recieve the full dOB in format dd-mm-yyyy and parse it to dd, mm,
-    // yyyy separately.
-    // then use isValidDate to validate
 
     protected void setdOB(String dOB) {
-        String d = (dOB == null) ? "" : dOB.trim();
-
-        if (d.isEmpty()) {
-            throw new IllegalArgumentException("Date of birth must be filled.");
-        } else if (d.length() != 10 || !isValidDate(d)) {
-            throw new IllegalArgumentException("Invalid Date of birth. Use format: yyyy-MM-dd");
+        String d = dOB.trim();
+        try {
+            LocalDate parsed = LocalDate.parse(d); // expects yyyy-MM-dd
+            if (parsed.isAfter(LocalDate.now()))
+                throw new IllegalArgumentException("Date of birth cannot be in the future.");
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "Date of birth must be in format YYYY-MM-DD (e.g. 2000-05-25).");
         }
-
         this.dOB = d;
     }
-
-    // protected void setdOB(String dd, String mm, String yyyy) {
-    // if (dd == null || mm == null || yyyy == null) {
-    // dd = "";
-    // mm = "";
-    // yyyy = "";
-    // }
-    // if (dd.isEmpty() || mm.isEmpty() || yyyy.isEmpty()) {
-    // throw new IllegalArgumentException("Date of birth must be filled.");
-    // }
-    // if (!isValidDate(dd, mm, yyyy))
-    // dOB = dd + "-" + mm + "-" + yyyy;
-
-    // dOB = dd + "-" + mm + "-" + yyyy;
-    // }
 
     protected void setUsername(String username) {
         if (username.isEmpty() || username.isBlank()) {
@@ -120,11 +126,12 @@ public abstract class User {
     protected void setPassword(String password) {
         if (password.isEmpty() || password.isBlank()) {
             throw new IllegalArgumentException("Password must be filled.");
-        } else if (!(isValidPassword(password))) {
-            throw new IllegalArgumentException(
-                    "Password must contain at least 8 characters with at least one upper and lower case and special character and no white space.");
         }
-        this.password = password.trim();
+        if (!password.matches(PASSWORD_REGEX)) {
+            throw new IllegalArgumentException(
+                    "Invalid password. " + PASSWORD_HINT);
+        }
+        this.password = password;
     }
 
     protected void setFullname(String fullname) {
@@ -137,6 +144,7 @@ public abstract class User {
     }
 
     protected void setRole(UserRole role) {
+        if (role == null) throw new IllegalArgumentException("Role is required.");
         this.role = role;
     }
 
@@ -153,6 +161,13 @@ public abstract class User {
         return true;
     }
 
+    public static final String PASSWORD_REGEX =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%&*_])[A-Za-z\\d!@#$%&*_]{8,20}$";
+
+
+    public static final String PASSWORD_HINT  =
+            "8–20 chars, at least one uppercase, lowercase, digit, and special character (!@#$%&*_). No spaces.";
+
     /*
      * 1. check string length
      * 2 check if it's digit
@@ -164,15 +179,15 @@ public abstract class User {
      * -dd <=29 on feb
      */
 
-    public boolean isValidDate(String date) {
-        try {
-            LocalDate parsedDate = LocalDate.parse(date); // ISO format yyyy-MM-dd
-            return !parsedDate.isAfter(LocalDate.now());
-        } catch (DateTimeParseException e) {
-            System.out.println("\nDate must be in format: yyyy-MM-dd.");
-            return false;
-        }
-    }
+//    public boolean isValidDate(String date) {
+//        try {
+//            LocalDate parsedDate = LocalDate.parse(date); // ISO format yyyy-MM-dd
+//            return !parsedDate.isAfter(LocalDate.now());
+//        } catch (DateTimeParseException e) {
+//            System.out.println("\nDate must be in format: yyyy-MM-dd.");
+//            return false;
+//        }
+//    }
 
 //    public boolean isValidDate(String date) {
 //
@@ -215,16 +230,16 @@ public abstract class User {
 
 
 
-    private boolean isValidPassword(String pw) {
-        final String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%&*_])[A-Za-z\\d!@#$%&*_]{8,20}$";
-        Pattern pattern = Pattern.compile(regex);
-
-        if (pw == null || !(pattern.matcher(pw).matches())) {
-            return false;
-        }
-
-        return true;
-    }
+//    private boolean isValidPassword(String pw) {
+//        final String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%&*_])[A-Za-z\\d!@#$%&*_]{8,20}$";
+//        Pattern pattern = Pattern.compile(regex);
+//
+//        if (pw == null || !(pattern.matcher(pw).matches())) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
     @Override
     public String toString() {
