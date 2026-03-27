@@ -18,36 +18,25 @@ public class LoanAccount extends Account {
     private int term; // Term: The duration over (in year) which the loan will be repaid
     private double rate;
 
-    public LoanAccount(String accountNumber, int userId, String holderName, String email, String accountPin,
-            AccountStatus accountStatus, double balance, double principle, int term) {
-        super(accountNumber,userId, holderName, email, accountPin, accountStatus, balance);
+    public LoanAccount(String accountNumber,int userId, String holderName, String email, String accountPin,AccountType accountType,
+                       AccountStatus accountStatus, double balance , boolean trusted, double principle, int term) {
+        super(accountNumber, userId, holderName, email, accountPin,AccountType.LOAN, accountStatus, balance , trusted);
         this.getAccountType();
         setPrinciple(principle);
         setTerm(term);
         this.rate = calculateInterest(principle, term);
     }
 
-//    @Override
-//    public void updatedBalance(String accountNumber, double newBalance) {
-//
-//
-//    }
-
-    @Override
-    public void withdraw(String accountNumber, double amount) {
-
+    public LoanAccount(String accountNumber, int userId, String holderName, String email, String accountPin, AccountType accountType,
+                       AccountStatus accountStatus, double balance) {
+        super(accountNumber, userId, holderName, email, accountPin, AccountType.LOAN, accountStatus, balance);
     }
 
-    @Override
-    public void transfer(String fromAccount, String toAccount, double amount) {
-
+    // Used for DB (trusted data, no validation)
+    public LoanAccount(String accountNumber, int userId, String holderName, String email, String accountPin, AccountType accountType,
+                       AccountStatus accountStatus, double balance, boolean trusted) {
+        super(accountNumber, userId, holderName, email, accountPin, AccountType.LOAN, accountStatus, balance, trusted);
     }
-
-    @Override
-    public void deposit(String accountNumber, double amount) {
-
-    }
-
     // === Getters ===
 
     public double getPrinciple() {
@@ -74,11 +63,6 @@ public class LoanAccount extends Account {
             throw new IllegalArgumentException("Duration of loaning money must be from 1 year.");
         }
         this.term = term;
-    }
-
-    @Override
-    public AccountType getAccountType() {
-        return AccountType.LOAN;
     }
 
     public double calculateInterest(double principal, int term) {
