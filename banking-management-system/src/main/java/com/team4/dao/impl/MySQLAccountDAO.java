@@ -74,10 +74,10 @@ public class MySQLAccountDAO implements AccountDAO {
                 String accountType = rs.getString("account_type");
 
                 if(accountType.equalsIgnoreCase("SAVINGS")){
-                    return new SavingsAccount(accountNumber, userId, holderName, email, accountPin, AccountStatus.valueOf(accountStatus), balance);
+                    return new SavingsAccount(accountNumber, userId, holderName, email, accountPin,AccountType.SAVINGS, AccountStatus.valueOf(accountStatus), balance, true);
                 }
                 else if(accountType.equalsIgnoreCase("MAIN")){
-                    return new MainAccount(accountNumber, userId, holderName, email, accountPin, AccountStatus.valueOf(accountStatus), balance);
+                    return new MainAccount(accountNumber, userId, holderName, email, accountPin,AccountType.MAIN, AccountStatus.valueOf(accountStatus), balance, true);
                 }
 //                else if(accountType.equalsIgnoreCase("LOAN")){
 //                    return new LoanAccount(accountNumber, holderName, email, accountPin, AccountStatus.valueOf(accountStatus), balance);
@@ -112,9 +112,9 @@ public class MySQLAccountDAO implements AccountDAO {
                 String accountType   = rs.getString("account_type");
 
                 if (accountType.equalsIgnoreCase("SAVINGS"))
-                    accounts.add(new SavingsAccount(accountNumber, userId, holderName, email, accountPin, AccountStatus.valueOf(accountStatus), balance));
+                    accounts.add(new SavingsAccount(accountNumber, userId, holderName, email, accountPin,AccountType.SAVINGS, AccountStatus.valueOf(accountStatus), balance, true));
                 else if (accountType.equalsIgnoreCase("MAIN"))
-                    accounts.add(new MainAccount(accountNumber, userId, holderName, email, accountPin, AccountStatus.valueOf(accountStatus), balance));
+                    accounts.add(new MainAccount(accountNumber, userId, holderName, email, accountPin,AccountType.MAIN, AccountStatus.valueOf(accountStatus), balance, true));
             }
         }
         return accounts;
@@ -139,9 +139,9 @@ public class MySQLAccountDAO implements AccountDAO {
                 String accountType    = rs.getString("account_type");
 
                 if (accountType.equalsIgnoreCase("SAVINGS"))
-                    accounts.add(new SavingsAccount(accountNumber, userId, holderName, email, accountPin, AccountStatus.valueOf(accountStatus), balance));
+                    accounts.add(new SavingsAccount(accountNumber, userId, holderName, email, accountPin,AccountType.SAVINGS, AccountStatus.valueOf(accountStatus), balance, true));
                 else if (accountType.equalsIgnoreCase("MAIN"))
-                    accounts.add(new MainAccount(accountNumber, userId, holderName, email, accountPin, AccountStatus.valueOf(accountStatus), balance));
+                    accounts.add(new MainAccount(accountNumber, userId, holderName, email, accountPin,AccountType.MAIN, AccountStatus.valueOf(accountStatus), balance, true));
             }
         }
         return accounts;
@@ -167,7 +167,7 @@ public class MySQLAccountDAO implements AccountDAO {
     public void createAccount(String accountNumber, int userId, String holderName,
                               String email, String pin, AccountType type,
                               double balance) throws SQLException {
-        String sql = "INSERT INTO accounts(account_number, user_id, holder_name, email, " +
+        String sql = "INSERT INTO accounts(account_number, id, holder_name, email, " +
                 "account_pin, balance, account_status, account_type) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
