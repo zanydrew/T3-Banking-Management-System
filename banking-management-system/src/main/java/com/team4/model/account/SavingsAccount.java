@@ -1,34 +1,17 @@
 package com.team4.model.account;
 
 public class SavingsAccount extends Account {
-    public SavingsAccount(String accountNumber, int userId, String holderName, String email, String accountPin,
-            AccountStatus accountStatus, double balance) {
-        super(accountNumber,userId, holderName, email, accountPin, accountStatus, balance);
+    public SavingsAccount(String accountNumber, int userId, String holderName, String email, String accountPin, AccountType accountType,
+                          AccountStatus accountStatus, double balance) {
+        super(accountNumber, userId, holderName, email, accountPin, AccountType.SAVINGS, accountStatus, balance);
     }
 
-//    @Override
-//    public void updatedBalance(String accountNumber, double newBalance) {
-//
-//
-//    }
-    @Override
-    public AccountType getAccountType() {
-        return AccountType.SAVINGS;
-    }
-    @Override
-    public void withdraw(String accountNumber, double amount) {
-
+    // Used for DB (trusted data, no validation)
+    public SavingsAccount(String accountNumber, int userId, String holderName, String email, String accountPin, AccountType accountType,
+                          AccountStatus accountStatus, double balance, boolean trusted) {
+        super(accountNumber, userId, holderName, email, accountPin, AccountType.SAVINGS, accountStatus, balance, trusted);
     }
 
-    @Override
-    public void transfer(String fromAccount, String toAccount, double amount) {
-
-    }
-
-    @Override
-    public void deposit(String accountNumber, double amount) {
-
-    }
 
     @Override
     public String toString() {
