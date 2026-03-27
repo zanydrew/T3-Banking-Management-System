@@ -24,22 +24,19 @@ public class MySQLUserDAO implements UserDAO {
     // create mapRow() method for reusable in extract data from the row in DB
 
     private User mapRow(ResultSet rs) throws SQLException {
-        // make sure row found in DB
-        System.out.println("Row found in DB!");
-        int user_id = rs.getInt("user_id");
-        String user_name = rs.getString("username");
-        String password = rs.getString("password");
-        String fullName = rs.getString("full_name");
-        String phone = rs.getString("phone");
-        String dOB = rs.getString("dOB");
-        String role = rs.getString("role");
-        if(role.equalsIgnoreCase("MANAGER")){
-            return new Manager(user_id, user_name, password, fullName, phone, dOB, UserRole.valueOf(role));
-        }
-        else if(role.equalsIgnoreCase("CUSTOMER")){
-            return new Customer(user_id, user_name, password, fullName, phone, dOB, UserRole.valueOf(role));
-        }
-        return null;
+        int      userId   = rs.getInt("user_id");
+        String   username = rs.getString("username");
+        String   password = rs.getString("password");
+        String   fullname = rs.getString("full_name");
+        String   phone    = rs.getString("phone");
+        String   dob      = rs.getString("dob");
+        UserRole role     = UserRole.valueOf(rs.getString("role"));
+
+        // true = trusted DB load, skips all validation
+        if (role == UserRole.MANAGER)
+            return new Manager(userId, username, password, fullname, phone, dob, true);
+        else
+            return new Customer(userId, username, password, fullname, phone, dob,true);
     }
 
     @Override
