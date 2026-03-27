@@ -3,39 +3,15 @@ package com.team4.model.account;
 // import com.team4.model.AccountType;
 public class MainAccount extends Account {
 
-    public MainAccount(String accountNumber, int userId, String holderName, String email, String accountPin,
+    public MainAccount(String accountNumber, int userId, String holderName, String email, String accountPin, AccountType accountType,
                        AccountStatus accountStatus, double balance) {
-        super(accountNumber, userId, holderName, email, accountPin, accountStatus, balance);
+        super(accountNumber, userId, holderName, email, accountPin, AccountType.MAIN, accountStatus, balance);
     }
 
-//    @Override
-//    public void updatedBalance(String accountNumber, double newBalance) {
-//
-//    }
-
-    @Override
-    public void withdraw(String accountNumber, double amount) {
-
-    }
-
-    @Override
-    public void transfer(String fromAccount, String toAccount, double amount) {
-
-    }
-
-    @Override
-    public void deposit(String accountNumber, double amount) {
-
-    }
-
-//    @Override
-//    public Account getAccountByNumber(String accountNumber) {
-//        return null;
-//    }
-
-    @Override
-    public AccountType getAccountType() {
-        return AccountType.MAIN;
+    // Used for DB (trusted data, no validation)
+    public MainAccount(String accountNumber, int userId, String holderName, String email, String accountPin, AccountType accountType,
+                       AccountStatus accountStatus, double balance, boolean trusted) {
+        super(accountNumber, userId, holderName, email, accountPin, AccountType.MAIN, accountStatus, balance, trusted);
     }
 
     @Override
