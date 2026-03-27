@@ -1,10 +1,18 @@
 package com.team4.model.account;
 
-import com.team4.service.AccountServiceInterface;
-
 import java.util.regex.Pattern;
 
-public abstract class Account implements AccountServiceInterface {
+/**
+ * Abstract base class for all account types.
+ *
+ * Design decisions:
+ * - ONE constructor that always validates.
+ * - Another constructor for loading trusted data in the database (no validation needed)
+ * - All validation logic lives HERE.
+ * - Subclasses (SavingsAccount, MainAccount) set their own AccountType in their constructor. Account base doesn't need to know the type.
+ */
+
+public abstract class Account{
     private String accountNumber;
     private int userId;
     private String customerId;
@@ -15,10 +23,8 @@ public abstract class Account implements AccountServiceInterface {
     private AccountStatus accountStatus;
     private double balance;
 
-//    public abstract void updatedBalance(String accountNumber, double newBalance);
-
     // ==== Constructor ====
-    public Account(String accountNumber,int userId, String holderName, String email, String accountPin,
+    public Account(String accountNumber,int userId, String holderName, String email, String accountPin,AccountType accountType,
             AccountStatus accountStatus,
             double balance) {
         setAccountNumber(accountNumber);
@@ -26,9 +32,28 @@ public abstract class Account implements AccountServiceInterface {
         setHolderName(holderName);
         setEmail(email);
         setAccountPin(accountPin);
-        // setAccountType(accountType);
+         setAccountType(accountType);
         setAccountStatus(accountStatus);
         setBalance(balance);
+    }
+
+    /**
+     * Another constructor for load Account from trusted DB data, no validation.
+     * Use ONLY inside DAO(Data Access Object) implementations.
+     */
+    protected Account(String accountNumber, int userId, String holderName,
+                      String email, String accountPin, AccountType accountType,
+                      AccountStatus accountStatus, double balance, boolean trusted){
+        this.accountNumber = accountNumber;
+        this.userId = userId;
+        this.holderName = holderName;
+        this.email = email;
+        this.accountPin = accountPin;
+        this.accountType = accountType;
+        this.accountStatus = accountStatus;
+        this.balance = balance;
+
+
     }
 
     // === Getters ===
@@ -69,6 +94,7 @@ public abstract class Account implements AccountServiceInterface {
     }
 
     public void setUserId(int userId) {
+        if (userId <= 0) throw new IllegalArgumentException("User ID must be positive.");
         this.userId = userId;
     }
 
@@ -90,25 +116,27 @@ public abstract class Account implements AccountServiceInterface {
     }
 
     protected void setEmail(String email) {
-        if (email.isEmpty() || email.isBlank()) {
-            this.email = "No Email";
-        } else if (!(isValidEmail(email))) {
-            throw new IllegalArgumentException(
-                    "Email must be valid");
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email must be filled.");
         }
-        this.email = email.trim();
+        String trimmed = email.trim();
+        if (!EMAIL_PATTERN.matcher(trimmed).matches())
+            throw new IllegalArgumentException("Email must be a valid email address.");
+        this.email = trimmed;
     }
 
     protected void setAccountPin(String accountPin) {
         if (accountPin.isEmpty() || accountPin.isBlank()) {
             throw new IllegalArgumentException("Pin must be filled.");
-        } else if (!isDigits(accountPin) || accountPin.length() != 4) {
-            throw new IllegalArgumentException("Pin must have 4 Numbers");
         }
-        this.accountPin = accountPin;
+        String pin = accountPin.trim();
+        if (!isDigits(pin) || pin.length() != 4)
+            throw new IllegalArgumentException("Account PIN must be exactly 4 digits.");
+        this.accountPin = pin;
     }
 
     protected void setAccountType(AccountType accountType) {
+        if (accountType == null) throw new IllegalArgumentException("Account type is required.");
         this.accountType = accountType;
     }
 
@@ -121,16 +149,20 @@ public abstract class Account implements AccountServiceInterface {
 
     // === Helpers ===
 
-    public boolean isValidEmail(String e) {
-        final String email_regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@"
-                + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        Pattern pattern = Pattern.compile(email_regex);
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
-        if (e == null || !(pattern.matcher(e).matches())) {
-            return false;
-        }
-        return true;
-    }
+
+//    public boolean isValidEmail(String e) {
+//        final String email_regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@"
+//                + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+//        Pattern pattern = Pattern.compile(email_regex);
+//
+//        if (e == null || !(pattern.matcher(e).matches())) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     public boolean isDigits(String s) {
         if (s.isBlank())
