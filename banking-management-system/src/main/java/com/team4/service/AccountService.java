@@ -3,6 +3,9 @@ package com.team4.service;
 import com.team4.dao.AccountDAO;
 import com.team4.dao.TransactionDAO;
 import com.team4.model.account.Account;
+import com.team4.model.transaction.Transaction;
+import com.team4.model.transaction.TransactionType;
+import com.team4.util.TransactionReceiptGenerator;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,6 +41,21 @@ public class AccountService implements AccountServiceInterface {
             double newBalance = account.getBalance() + amount;
             accountDAO.updateBalance(accountNumber, newBalance);
 
+            // Save transaction record
+            Transaction tx = new Transaction.Builder()
+                    .type(TransactionType.DEPOSIT)
+                    .toAccount(accountNumber)
+                    .amount(amount)
+                    .description("Customer deposit")
+                    .initiatedBy(accountNumber)
+                    .build();
+            tx.markCompleted();
+            transactionDAO.saveTransaction(tx);
+
+            TransactionReceiptGenerator.generate(tx, accountNumber);
+
+            connection.commit();
+
         } catch (Exception e) {
             // if there's any fail, undo change
             rollback();
@@ -68,6 +86,20 @@ public class AccountService implements AccountServiceInterface {
             }
             double newBalance = account.getBalance() + amount;
             accountDAO.updateBalance(accountNumber, newBalance);
+
+            // Save transaction record
+            Transaction tx = new Transaction.Builder()
+                    .type(TransactionType.WITHDRAW)
+                    .fromAccount(accountNumber)
+                    .amount(amount)
+                    .description("Customer withdrawal")
+                    .initiatedBy(accountNumber)
+                    .build();
+            tx.markCompleted();
+            transactionDAO.saveTransaction(tx);
+
+            TransactionReceiptGenerator.generate(tx, accountNumber);
+
             connection.commit();
 
         } catch (Exception e) {
@@ -101,6 +133,21 @@ public class AccountService implements AccountServiceInterface {
             // Both updates in the same transaction, either both commit or both rollback
             accountDAO.updateBalance(fromAccountNumber, from.getBalance() - amount);
             accountDAO.updateBalance(toAccountNumber,   to.getBalance()   + amount);
+
+            // Save transaction record
+            Transaction tx = new Transaction.Builder()
+                    .type(TransactionType.TRANSFER)
+                    .fromAccount(fromAccountNumber)
+                    .toAccount(toAccountNumber)
+                    .amount(amount)
+                    .description("Customer transfer")
+                    .initiatedBy(fromAccountNumber)
+                    .build();
+            tx.markCompleted();
+            transactionDAO.saveTransaction(tx);
+
+            TransactionReceiptGenerator.generate(tx, fromAccountNumber);
+
             connection.commit();
 
         } catch (Exception e) {
