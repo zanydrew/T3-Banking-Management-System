@@ -1,0 +1,26 @@
+════════════════════════════════════════════════
+          iBanking — Transaction Receipt          
+════════════════════════════════════════════════
+
+  Type     : DEPOSIT  (+)
+  Status   : COMPLETED
+  Date     : 2026-04-02 22:52:44
+  Receipt  : be476cc8-bccc-44b8-9c93-9b4bb6be78a4
+
+────────────────────────────────────────────────
+  TRANSACTION DETAILS
+────────────────────────────────────────────────
+  To Account   : ACC100001
+  Amount       : $30.00
+  Note         : Customer deposit
+
+────────────────────────────────────────────────
+  AUTHORIZATION
+────────────────────────────────────────────────
+  Initiated by : ACC100001
+  Processed    : 2026-04-02 22:52:44
+
+════════════════════════════════════════════════
+   Thank you for banking with iBanking.
+   Keep this receipt for your records.
+════════════════════════════════════════════════

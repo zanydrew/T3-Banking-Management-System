@@ -9,6 +9,7 @@ import com.team4.model.account.AccountStatus;
 import com.team4.model.account.AccountType;
 import com.team4.model.account.MainAccount;
 import com.team4.model.transaction.Transaction;
+import com.team4.model.transaction.TransactionType;
 import com.team4.model.user.Customer;
 import com.team4.model.user.User;
 import com.team4.model.user.UserRole;
@@ -369,19 +370,55 @@ public class ManagerService implements  ManagerServiceInterface{
 
     @Override
     public void managerDeposit(String accountNumber, double amount, String managerUsername) {
+        Account account = getAccountOrThrow(accountNumber);
+        checkAccountOperable(account);
 
+        accountService.deposit(accountNumber, amount);
+
+        saveTransaction(new Transaction.Builder()
+                .type(TransactionType.DEPOSIT)
+                .toAccount(accountNumber)
+                .amount(amount)
+                .description("Manager-initiated deposit")
+                .initiatedBy(managerUsername)
+                .build());
     }
 
     @Override
     public void managerWithdraw(String accountNumber, double amount, String managerUsername) {
+        Account account = getAccountOrThrow(accountNumber);
+        checkAccountOperable(account);
 
+        accountService.withdraw(accountNumber, amount);
+
+        saveTransaction(new Transaction.Builder()
+                .type(TransactionType.WITHDRAW)
+                .fromAccount(accountNumber)
+                .amount(amount)
+                .description("Manager-initiated withdrawal")
+                .initiatedBy(managerUsername)
+                .build());
     }
 
     @Override
-    public void managerTransfer(String fromAccount, String toAccount, double amount, String managerUsername) {
+    public void managerTransfer(String fromAccountNumber, String toAccountNumber,
+                                double amount, String managerUsername) {
+        Account from = getAccountOrThrow(fromAccountNumber);
+        Account to   = getAccountOrThrow(toAccountNumber);
+        checkAccountOperable(from);
+        checkAccountOperable(to);
 
+        accountService.transfer(fromAccountNumber, toAccountNumber, amount);
+
+        saveTransaction(new Transaction.Builder()
+                .type(TransactionType.TRANSFER)
+                .fromAccount(fromAccountNumber)
+                .toAccount(toAccountNumber)
+                .amount(amount)
+                .description("Manager-initiated transfer")
+                .initiatedBy(managerUsername)
+                .build());
     }
-
 
 }
 

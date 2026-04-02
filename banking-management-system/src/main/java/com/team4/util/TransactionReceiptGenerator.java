@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TransactionReceiptGenerator {
-    private static final String RECEIPTS_DIR = "receipts";
+    private static final String RECEIPTS_DIR = "src/main/resources/receipts";
 
     public static File generate(Transaction transaction, String initiatorName) {
         try {
