@@ -1,45 +1,13 @@
-# Default ignored files
-#/shelf/
-#/.idea/workspace.xml
-# Ignored default folder with query files
-#/queries/
-# Datasource local storage ignored files
-#/dataSources/
-#/dataSources.local.xml
-# Editor-based HTTP Client requests
-#/httpRequests/
-#
-##complied classes
-#target/
-
-
-# =====================
-# Maven
-# =====================
-/target/
-
-# =====================
 # IntelliJ
-# =====================
-/shelf/
-/.idea/workspace.xml
-/queries/
-/dataSources/
-/dataSources.local.xml
-/httpRequests/
-/.idea
-
-# Optional but common
+**/.idea/
 *.iml
-out/
 
-# =====================
-# OS files
-# =====================
+# Maven
+**/target/
+
+# Logs
+*.log
+
+# OS
 .DS_Store
 Thumbs.db
-
-# =====================
-# Logs
-# =====================
-*.log
